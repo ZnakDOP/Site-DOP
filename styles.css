@@ -211,8 +211,19 @@ h2 {
 }
 
 .tile-photo-7 {
+  background-image: none;
+  overflow: hidden;
+}
+
+.tile-photo-7::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
   background-image: url("images/work-7.jpg");
-  transform: scaleX(-1);
+  background-size: cover;
+  background-position: center;
+  transform: rotate(-90deg);
+  transform-origin: center;
 }
 
 .portfolio {
