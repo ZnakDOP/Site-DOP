@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   font-family: "Inter", sans-serif;
   color: var(--text);
-  background: url("/images/arsenii-camera.jpg");
+  background: url("images/arsenii-camera.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -203,15 +203,15 @@ h2 {
 }
 
 .tile-photo-5 {
-  background-image: url("/images/work-5.jpg");
+  background-image: url("images/work-5.jpg");
 }
 
 .tile-photo-6 {
-  background-image: url("/images/work-6.jpg");
+  background-image: url("images/work-6.jpg");
 }
 
 .tile-photo-7 {
-  background-image: url("/images/work-7.jpg");
+  background-image: url("images/work-7.jpg");
 }
 
 .portfolio {
@@ -257,19 +257,19 @@ h2 {
 }
 
 .work-1 {
-  background-image: url("/images/work-1.jpg"), url("/images/arsenii-camera.jpg");
+  background-image: url("images/work-1.jpg"), url("images/arsenii-camera.jpg");
 }
 
 .work-2 {
-  background-image: url("/images/work-2.jpg"), url("/images/arsenii-camera.jpg");
+  background-image: url("images/work-2.jpg"), url("images/arsenii-camera.jpg");
 }
 
 .work-3 {
-  background-image: url("/images/work-3.jpg"), url("/images/arsenii-camera.jpg");
+  background-image: url("images/work-3.jpg"), url("images/arsenii-camera.jpg");
 }
 
 .work-4 {
-  background-image: url("/images/work-4.jpg"), url("/images/arsenii-camera.jpg");
+  background-image: url("images/work-4.jpg"), url("images/arsenii-camera.jpg");
 }
 
 .rental-list {
