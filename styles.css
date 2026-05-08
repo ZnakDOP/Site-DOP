@@ -222,7 +222,7 @@ h2 {
   background-image: url("images/work-7.jpg");
   background-size: cover;
   background-position: center;
-  transform: rotate(-90deg);
+  transform: rotate(90deg);
   transform-origin: center;
 }
 
