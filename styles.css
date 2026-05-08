@@ -212,6 +212,7 @@ h2 {
 
 .tile-photo-7 {
   background-image: url("images/work-7.jpg");
+  transform: scaleX(-1);
 }
 
 .portfolio {
