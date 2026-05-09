@@ -44,10 +44,31 @@
         <aside class="card booking-cart">
           <h2>Корзина</h2>
           <div class="date-range-field">
-            <label for="date-from">Аренда с</label>
-            <input id="date-from" name="date-from" type="date" />
-            <label for="date-to">Аренда по</label>
-            <input id="date-to" name="date-to" type="date" />
+            <span class="date-range-field-title">Период аренды</span>
+            <span class="calendar-hint">Первый тап — начало аренды, второй — окончание (один тап дважды = один день).</span>
+            <div
+              class="calendar-widget"
+              id="booking-calendar"
+              role="application"
+              aria-label="Календарь: выберите дату начала, затем дату окончания"
+            >
+              <div class="calendar-widget-header">
+                <button type="button" class="calendar-nav" id="cal-prev" aria-label="Предыдущий месяц">
+                  ‹
+                </button>
+                <div class="calendar-month-label" id="cal-month-label"></div>
+                <button type="button" class="calendar-nav" id="cal-next" aria-label="Следующий месяц">
+                  ›
+                </button>
+              </div>
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+              </div>
+              <div class="calendar-grid" id="cal-grid"></div>
+              <p class="calendar-range-readout" id="cal-readout"></p>
+            </div>
+            <input id="date-from" name="date-from" type="hidden" />
+            <input id="date-to" name="date-to" type="hidden" />
             <p class="date-range-meta">Смен в выбранном периоде: <strong id="shifts-count">1</strong></p>
           </div>
           <p id="cart-empty" class="cart-empty">Корзина пуста — добавьте технику из каталога.</p>

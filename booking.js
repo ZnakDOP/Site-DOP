@@ -14,12 +14,22 @@
   /** @type {Record<string, number>} */
   let cart = loadCart();
 
+  let calViewYear = new Date().getFullYear();
+  let calViewMonth = new Date().getMonth();
+  /** 0 — следующий тап задаёт начало (и конец = тот же день); 1 — следующий тап задаёт конец */
+  let calRangePhase = 0;
+
   const els = {
     catalog: document.getElementById("catalog"),
     cartLines: document.getElementById("cart-lines"),
     cartEmpty: document.getElementById("cart-empty"),
     dateFrom: document.getElementById("date-from"),
     dateTo: document.getElementById("date-to"),
+    calGrid: document.getElementById("cal-grid"),
+    calMonthLabel: document.getElementById("cal-month-label"),
+    calPrev: document.getElementById("cal-prev"),
+    calNext: document.getElementById("cal-next"),
+    calReadout: document.getElementById("cal-readout"),
     shiftsCount: document.getElementById("shifts-count"),
     total: document.getElementById("cart-total"),
     form: document.getElementById("reserve-form"),
@@ -91,6 +101,147 @@
       els.dateTo.value = els.dateFrom.value;
     }
     els.shiftsCount.textContent = String(getShifts());
+  }
+
+  function syncCalViewFromFrom() {
+    if (!els.dateFrom || !els.dateFrom.value) return;
+    const d = parseDateInput(els.dateFrom.value);
+    if (d) {
+      calViewYear = d.getFullYear();
+      calViewMonth = d.getMonth();
+    }
+  }
+
+  function updateCalendarReadout() {
+    if (!els.calReadout || !els.dateFrom || !els.dateTo) return;
+    const a = els.dateFrom.value;
+    const b = els.dateTo.value;
+    if (!a || !b) {
+      els.calReadout.textContent = "";
+      return;
+    }
+    const da = parseDateInput(a);
+    const db = parseDateInput(b);
+    if (!da || !db) return;
+    if (a === b) {
+      els.calReadout.textContent = da.toLocaleDateString("ru-RU", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    } else {
+      els.calReadout.textContent =
+        da.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }) +
+        " — " +
+        db.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+    }
+  }
+
+  function renderCalendarWidget() {
+    if (!els.calGrid || !els.calMonthLabel) return;
+    const rawMonth = new Date(calViewYear, calViewMonth, 1).toLocaleDateString("ru-RU", {
+      month: "long",
+      year: "numeric",
+    });
+    els.calMonthLabel.textContent = rawMonth.replace(/^./, (ch) => ch.toUpperCase());
+
+    const fromStr = els.dateFrom ? els.dateFrom.value : "";
+    const toStr = els.dateTo ? els.dateTo.value : "";
+    const todayStr = yyyyMmDd(new Date());
+
+    els.calGrid.innerHTML = "";
+    const first = new Date(calViewYear, calViewMonth, 1);
+    const startPad = (first.getDay() + 6) % 7;
+    const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+
+    let dayNum = 1;
+    for (let i = 0; i < 42; i++) {
+      if (i < startPad || dayNum > daysInMonth) {
+        const ph = document.createElement("div");
+        ph.className = "calendar-cell calendar-cell--empty";
+        ph.setAttribute("aria-hidden", "true");
+        els.calGrid.appendChild(ph);
+        continue;
+      }
+
+      const ymd = yyyyMmDd(new Date(calViewYear, calViewMonth, dayNum));
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "calendar-cell";
+      btn.textContent = String(dayNum);
+      btn.setAttribute("data-ymd", ymd);
+
+      if (ymd < todayStr) {
+        btn.classList.add("calendar-cell--muted");
+        btn.disabled = true;
+      }
+      if (ymd === todayStr) btn.classList.add("calendar-cell--today");
+
+      const isFrom = Boolean(fromStr && ymd === fromStr);
+      const isTo = Boolean(toStr && ymd === toStr);
+      const inRange = Boolean(
+        fromStr && toStr && fromStr !== toStr && ymd > fromStr && ymd < toStr,
+      );
+
+      if (isFrom || isTo) {
+        btn.classList.add("calendar-cell--endpoint");
+      } else if (inRange) {
+        btn.classList.add("calendar-cell--in-range");
+      }
+
+      if (!btn.disabled) {
+        btn.addEventListener("click", () => onCalendarDayClick(ymd));
+      }
+
+      els.calGrid.appendChild(btn);
+      dayNum++;
+    }
+
+    updateCalendarReadout();
+  }
+
+  function onCalendarDayClick(ymd) {
+    if (!els.dateFrom || !els.dateTo) return;
+    if (calRangePhase === 0) {
+      els.dateFrom.value = ymd;
+      els.dateTo.value = ymd;
+      calRangePhase = 1;
+    } else {
+      const curFrom = els.dateFrom.value;
+      if (ymd < curFrom) {
+        els.dateTo.value = curFrom;
+        els.dateFrom.value = ymd;
+      } else {
+        els.dateTo.value = ymd;
+      }
+      calRangePhase = 0;
+    }
+    syncDateRange();
+    renderCart();
+    renderCalendarWidget();
+  }
+
+  function bindCalendarNav() {
+    if (els.calPrev) {
+      els.calPrev.addEventListener("click", () => {
+        calViewMonth -= 1;
+        if (calViewMonth < 0) {
+          calViewMonth = 11;
+          calViewYear -= 1;
+        }
+        renderCalendarWidget();
+      });
+    }
+    if (els.calNext) {
+      els.calNext.addEventListener("click", () => {
+        calViewMonth += 1;
+        if (calViewMonth > 11) {
+          calViewMonth = 0;
+          calViewYear += 1;
+        }
+        renderCalendarWidget();
+      });
+    }
   }
 
   /** @param {{ maxQty?: number }} item */
@@ -363,18 +514,8 @@
     }
   }
 
-  if (els.dateFrom) {
-    els.dateFrom.addEventListener("change", () => {
-      syncDateRange();
-      renderCart();
-    });
-  }
-  if (els.dateTo) {
-    els.dateTo.addEventListener("change", () => {
-      syncDateRange();
-      renderCart();
-    });
-  }
+  bindCalendarNav();
+
   if (els.btnXl) els.btnXl.addEventListener("click", openCartInXl);
 
   els.form.addEventListener("submit", (e) => {
@@ -523,10 +664,13 @@
 
   initDates();
   syncDateRange();
+  syncCalViewFromFrom();
+  calRangePhase = 0;
+  renderCalendarWidget();
 
-  const equipmentCsvUrl = new URL("equipment.csv", window.location.href).href;
-
-  fetch(equipmentCsvUrl, { cache: "no-store" })
+  const equipmentCsvUrl = new URL("equipment.csv", window.location.href);
+  equipmentCsvUrl.searchParams.set("v", "znak-rent-pdf-60");
+  fetch(equipmentCsvUrl.href, { cache: "no-store" })
     .then((r) => {
       if (!r.ok) throw new Error("HTTP " + r.status + " при загрузке equipment.csv");
       return r.text();
