@@ -1,0 +1,61 @@
+﻿id,name,category,pricePerShift,maxQty,kit
+sony-fx3-body,Sony FX3 body,Камера,4500,1,"body, клетка, верхняя ручка, 1 шт акб"
+insta360-x5,INSTA 360 X5,Камера,3000,1,"Клетка, защита линз, чехол на объективы, micro SD 256 GB (max bitrate 8K), USB‑C"
+v-mount-140-swit,V-Mount 140Wh SWIT,Источники питания,490,2,
+v-mount-99,V-Mount 99Wh,Источники питания,340,1,
+sony-np-fz100,Sony NP-FZ100,Источники питания,250,3,
+np-f970,NP-F970,Источники питания,400,1,
+np-f550,NP-F550,Источники питания,290,2,
+d-tap-21-dc,D-Tap / 2.1 DC,Источники питания,290,3,
+d-tap-4x,D-Tap / 4×D-Tap,Источники питания,290,1,
+charger-np-fz100,Зарядное устройство для NP-FZ100 (на 2 акб),Источники питания,290,1,"Блок питания, USB‑C"
+accsoon-npf-vplate,Accsoon NP-F to V-Mount Battery Plate (CineView M7 Series),Источники питания,500,1,
+cable-usbc-100w,Кабель 100W USB‑C to USB‑C,Источники питания,190,5,
+tamron-28-75-g2,Tamron 28-75mm f/2.8 Di III VXD G2 (Sony E),Объективы / фильтры / переходники,1190,1,
+dzofilm-octopus-pl-e,Переходник DZOFilm Octopus (ARRI PL → Sony E),Объективы / фильтры / переходники,590,1,
+kf-nd-cpl-82,Фильтр K&F Concept Nano-X Variable ND2-32 CPL MRC 82mm,Объективы / фильтры / переходники,890,1,Чехол
+step-ring-82-67,Переходное кольцо 82mm → 67mm,Объективы / фильтры / переходники,50,1,
+dune-filter-82,Светофильтр DUNE FILTER 82mm,Объективы / фильтры / переходники,500,1,"Чехол, тряпочка"
+dji-rs3-pro,DJI RS 3 Pro,Штативы / стабилизация,2190,1,"Подвес, провода, доп. передняя ручка"
+tilta-ring-dji-rs3,Кольцевая рукоятка Tilta для DJI RS 3 Pro,Штативы / стабилизация,1000,1,"Площадка под V-Mount, верхняя площадка с D-Tap, кейс"
+smallrig-tripod-3751b,Видеоштатив SmallRig 3751B,Штативы / стабилизация,1000,1,Транспортировочный чехол
+accsoon-seemo-ipad,Accsoon SeeMo Pro + iPad 13 Pro в клетке,Мониторы / передача изображения,3500,1,"Клетка, площадка V-Mount, HDMI‑HDMI, USB‑C"
+accsoon-cinemaster-4k,Accsoon CineMaster 4K,Мониторы / передача изображения,2290,1,
+accsoon-vlock-adapter,Accsoon V-Lock Adapter,Мониторы / передача изображения,650,1,
+accsoon-cineview-m7,Accsoon CineView M7 Pro (монитор-приёмник),Мониторы / передача изображения,2000,1,"Клетка, флешка 64 GB"
+radio-wln-kd-c1,Рация WLN KD-C1 Plus,Звук,290,4,Зарядные устройства
+hollyland-solidcom-se,Беспроводной интерком Hollyland Solidcom SE — 5S,Звук,1000,5,"5 доп. АКБ, зарядка, транспортировочный кейс"
+dji-mic-2,Радиосистема DJI Mic 2 (2TX + RX),Звук,750,1,"Наушники, телесный тейп, ветрозащита, USB‑C, USB‑B"
+rode-lavalier-ii,Микрофон петличный Rode Lavalier II,Звук,790,1,"Чехол, поп-фильтр, ветрозащита, клипсы, крепёжная гайка"
+rode-videomic-pro,Микрофон-пушка Rode VideoMic Pro,Звук,390,1,"Ветрозащита, батарейка"
+hdmi-05m-thin,"Кабель HDMI‑HDMI 4K 0,5 м (тонкий)",Коммутация,190,3,
+hdmi-1m,Кабель HDMI‑HDMI 4K 1 м,Коммутация,230,1,
+hdmi-5m,Кабель HDMI‑HDMI 4K 5 м,Коммутация,300,1,
+hdmi-20m,Кабель HDMI‑HDMI 4K 20 м,Коммутация,900,2,
+cable-dt-lm-dtap-lemo,Кабель питания DT-LM D-tap → Lemo 2-pin,Коммутация,200,1,
+extension-reel-10m,Сетевой удлинитель на катушке 10 м (2200 W),Коммутация,290,2,
+magic-arm-smallrig-m,Magic Arm SmallRig (средний),Держатели и Magic Arm,290,1,
+magic-arm-smallrig-s,Magic Arm SmallRig (маленький),Держатели и Magic Arm,290,1,
+clamp-smallrig,Клэмп SmallRig Clamp,Держатели и Magic Arm,290,1,
+clamp-magic-2,Клэмп + мэджик,Держатели и Magic Arm,300,2,
+smallrig-side-handle,Боковая ручка камеры SmallRig,Держатели и Magic Arm,290,2,
+rod-support-30-15,Суппорт 30 см — 15 мм,Держатели и Magic Arm,190,2,
+rod-support-15-15,Суппорт 15 см — 15 мм,Держатели и Magic Arm,190,2,
+tilta-baseplate-lws-ii,Быстросъёмная площадка Tilta 15mm LWS Baseplate Type II,Держатели и Magic Arm,780,1,
+ulanzi-falcam-baseplate,Базовая площадка Ulanzi Falcam Baseplate,Держатели и Magic Arm,500,1,
+onecine-v7-adapter,Адаптер с быстросъёмной площадкой OneCine V7,Держатели и Magic Arm,150,1,
+smallrig-lens-support,Поддержка объективов SmallRig,Держатели и Magic Arm,450,2,
+v-mount-plate-plain,Площадка V-Mount (без портов),Держатели и Magic Arm,590,2,
+sandisk-sd-256-v30,Карта памяти SanDisk SDXC 256 GB V30 200 MB/s,Память,700,2,Кейс
+ssd-t7-1tb,SSD Samsung T7 1 TB,Память,790,2,USB‑C
+ssd-t7-2tb,SSD Samsung T7 2 TB,Память,900,1,USB‑C
+hdd-seagate-4tb,HDD Seagate One Touch 4 TB,Память,800,2,"USB‑B, USB‑C"
+lexar-card-reader,Картридер Lexar (SD / microSD) → USB‑C,Память,500,1,
+aputure-accent-b7c,Лампа Aputure Accent B7C,Свет,790,1,
+amaran-200x-s,LED Aputure Amaran 200X S 2700–6500K,Свет,990,1,
+softbox-90-bowens,Параболический быстрораскладной софтбокс 90 (Bowens),Свет,300,1,"Чехол, софт 1/2, без сот"
+amaran-ace-25c,Светодиодный осветитель Amaran Ace 25c,Свет,690,1,Рассеиватель
+c-stand-40,C-Stand 40,Свет,500,1,
+extension-arm-40,Extension Arm 40,Свет,150,1,
+grip-head,Grip Head,Свет,150,1,
+sandbag-5kg,SandBag 5 кг,Свет,150,1,

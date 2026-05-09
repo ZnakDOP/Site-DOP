@@ -257,13 +257,144 @@
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   });
 
-  fetch("equipment.json", { cache: "no-store" })
+  function detectDelimiter(s) {
+    const line = s.split(/\r\n|\n|\r/, 1)[0] || "";
+    const commas = (line.match(/,/g) || []).length;
+    const semis = (line.match(/;/g) || []).length;
+    return semis > commas ? ";" : ",";
+  }
+
+  function parseCsv(text) {
+    const s = String(text).replace(/^\uFEFF/, "");
+    const delim = detectDelimiter(s);
+    const rows = [];
+    let row = [];
+    let field = "";
+    let i = 0;
+    let inQuotes = false;
+    while (i < s.length) {
+      const c = s[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (s[i + 1] === '"') {
+            field += '"';
+            i += 2;
+            continue;
+          }
+          inQuotes = false;
+          i++;
+          continue;
+        }
+        field += c;
+        i++;
+        continue;
+      }
+      if (c === '"') {
+        inQuotes = true;
+        i++;
+        continue;
+      }
+      if (c === delim) {
+        row.push(field);
+        field = "";
+        i++;
+        continue;
+      }
+      if (c === "\r") {
+        i++;
+        continue;
+      }
+      if (c === "\n") {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+        i++;
+        continue;
+      }
+      field += c;
+      i++;
+    }
+    row.push(field);
+    if (row.length > 1 || (row.length === 1 && row[0] !== "")) rows.push(row);
+    return rows;
+  }
+
+  function catalogFromCsvRows(rows) {
+    if (!rows.length) throw new Error("Пустой CSV");
+    const header = rows[0].map((h) => String(h).trim().toLowerCase());
+    const col = (name) => header.indexOf(name);
+    const idx = {
+      id: col("id"),
+      name: col("name"),
+      category: col("category"),
+      pricePerShift: col("pricepershift"),
+      maxQty: col("maxqty"),
+      kit: col("kit"),
+    };
+    if (idx.id < 0 || idx.name < 0 || idx.category < 0 || idx.pricePerShift < 0) {
+      throw new Error("В первой строке CSV нужны столбцы: id, name, category, pricePerShift");
+    }
+    const items = [];
+    for (let r = 1; r < rows.length; r++) {
+      const cells = rows[r];
+      if (!cells || cells.every((c) => !String(c).trim())) continue;
+      const name = String(cells[idx.name] ?? "").trim();
+      if (!name) continue;
+      let id = String(cells[idx.id] ?? "").trim();
+      if (!id) id = "item-" + r;
+      const category = String(cells[idx.category] ?? "").trim();
+      if (!category) continue;
+      const priceRaw = String(cells[idx.pricePerShift] ?? "")
+        .trim()
+        .replace(/\s/g, "")
+        .replace(",", ".");
+      const pricePerShift = parseFloat(priceRaw);
+      if (!Number.isFinite(pricePerShift) || pricePerShift < 0) continue;
+      /** @type {{ id: string, name: string, category: string, pricePerShift: number, maxQty?: number, kit?: string }} */
+      const item = {
+        id,
+        name,
+        category,
+        pricePerShift: Math.round(pricePerShift),
+      };
+      if (idx.maxQty >= 0) {
+        const mq = String(cells[idx.maxQty] ?? "").trim();
+        if (mq !== "") {
+          const n = parseInt(mq, 10);
+          if (Number.isFinite(n) && n >= 1) item.maxQty = n;
+        }
+      }
+      if (idx.kit >= 0) {
+        const kit = String(cells[idx.kit] ?? "").trim();
+        if (kit) item.kit = kit;
+      }
+      items.push(item);
+    }
+    const seen = new Set();
+    for (const item of items) {
+      let base = item.id;
+      let id = base;
+      let n = 0;
+      while (seen.has(id)) {
+        n += 1;
+        id = base + "-" + n;
+      }
+      item.id = id;
+      seen.add(id);
+    }
+    return { currency: "₽", items };
+  }
+
+  fetch("equipment.csv", { cache: "no-store" })
     .then((r) => {
       if (!r.ok) throw new Error("Не удалось загрузить каталог");
-      return r.json();
+      return r.text();
     })
-    .then((data) => {
-      if (!data.items || !Array.isArray(data.items)) throw new Error("Неверный формат каталога");
+    .then((text) => {
+      const rows = parseCsv(text);
+      const data = catalogFromCsvRows(rows);
+      if (!data.items.length) throw new Error("В CSV нет строк с техникой");
       catalog = data;
       pruneCart();
       els.loadError.hidden = true;
@@ -273,6 +404,6 @@
     .catch(() => {
       els.loadError.hidden = false;
       els.loadError.textContent =
-        "Не удалось загрузить equipment.json. Откройте сайт через локальный сервер или проверьте файл.";
+        "Не удалось загрузить equipment.csv. Проверьте файл или откройте сайт через локальный сервер (не file://).";
     });
 })();
