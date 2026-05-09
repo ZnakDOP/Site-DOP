@@ -127,6 +127,64 @@
     }
   }
 
+  /** Microsoft Office Web Viewer — открывает .xlsx в браузере; src должен быть публичным HTTPS. */
+  function officeOnlineViewerUrl(publicFileUrl) {
+    return "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(publicFileUrl);
+  }
+
+  /**
+   * Временная публикация файла (blob нельзя передать в Office Viewer напрямую).
+   * Пробуем несколько хостов с CORS; при блокировке — скачивание.
+   */
+  async function publishBlobTemporaryHttps(blob, filename) {
+    const fdLb = new FormData();
+    fdLb.append("reqtype", "fileupload");
+    fdLb.append("time", "24h");
+    fdLb.append("fileToUpload", blob, filename);
+    try {
+      const r = await fetch("https://litterbox.catbox.moe/resources/internals/api.php", {
+        method: "POST",
+        body: fdLb,
+        mode: "cors",
+      });
+      if (r.ok) {
+        const t = (await r.text()).trim();
+        if (/^https?:\/\//i.test(t)) return t;
+      }
+    } catch (e) {
+      console.warn("litterbox:", e);
+    }
+
+    const fd0 = new FormData();
+    fd0.append("file", blob, filename);
+    try {
+      const r = await fetch("https://0x0.st", {
+        method: "POST",
+        body: fd0,
+        mode: "cors",
+      });
+      if (r.ok) {
+        const t = (await r.text()).trim();
+        if (/^https?:\/\//i.test(t)) return t;
+      }
+    } catch (e) {
+      console.warn("0x0.st:", e);
+    }
+
+    throw new Error("upload_hosts_failed");
+  }
+
+  function downloadBlobAsFile(blob, downloadName) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = downloadName;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
+  }
+
   /**
    * В шаблоне формулы заданы как shared (один master + clone). После spliceRows/insertRow
    * ExcelJS при writeBuffer валится: «Shared Formula master must exist above…».
@@ -717,16 +775,44 @@
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       const nameSafe = projectTitle.replace(/[\\/:*?"<>|]/g, " ").trim().slice(0, 72) || "Znak-Rent";
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Смета ${nameSafe}.xlsx`;
-      a.rel = "noopener";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
+      const fileName = `Смета ${nameSafe}.xlsx`;
 
-      setXlStatus("Файл сметы скачан — откройте его в Excel.", false);
+      setXlStatus("Публикую файл для Excel Online (временная ссылка до 24 ч)…", false);
+      let publicUrl;
+      try {
+        publicUrl = await publishBlobTemporaryHttps(blob, fileName);
+      } catch {
+        downloadBlobAsFile(blob, fileName);
+        setXlStatus(
+          "Не удалось открыть онлайн (блокировка сети или хостинга). Файл скачан — откройте его в Excel.",
+          true,
+        );
+        return;
+      }
+
+      const viewUrl = officeOnlineViewerUrl(publicUrl);
+      const win = window.open(viewUrl, "_blank", "noopener,noreferrer");
+      if (!win) {
+        try {
+          await navigator.clipboard.writeText(viewUrl);
+          setXlStatus(
+            "Браузер заблокировал новую вкладку. Ссылка на Excel Online скопирована — вставьте её в адресную строку.",
+            true,
+          );
+        } catch {
+          downloadBlobAsFile(blob, fileName);
+          setXlStatus(
+            "Разрешите всплывающие окна для этого сайта и нажмите кнопку снова. Пока что файл скачан.",
+            true,
+          );
+        }
+        return;
+      }
+
+      setXlStatus(
+        "Открыта вкладка с Excel Online. Временная публичная ссылка на файл — до ~24 ч (сторонний хостинг).",
+        false,
+      );
     } catch (err) {
       const msg =
         err && typeof err.message === "string"
