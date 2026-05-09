@@ -17,22 +17,16 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="booking.css" />
   </head>
-  <body class="booking-body">
+  <body
+    class="booking-body"
+    data-sheet-webapp-url="https://script.google.com/macros/s/AKfycbxUfXBIteIMfQ3ugsTKQ5c-qqInePsMnzDPHMNiisTdK8AFXkkCg3IWlSY2eEZJGSW4/exec"
+    data-sheet-open-url="https://docs.google.com/spreadsheets/d/1sq9bjGp0LXDmUpviHv1O1A1HAsBuoPegYh5j3pNChfo/edit?gid=0#gid=0"
+  >
     <div class="booking-page">
       <header class="booking-top card">
         <div class="booking-intro">
           <a class="booking-back" href="index.html">← На главную</a>
           <h1>Бронирование техники</h1>
-          <p>
-            Добавьте позиции в корзину, укажите число съёмочных смен и отправьте заявку — откроется письмо на
-            <a href="mailto:a@gorushkindop.ru">a@gorushkindop.ru</a> с готовым текстом.
-          </p>
-          <p class="booking-hint">
-            Каталог — <a href="equipment.csv" download>equipment.csv</a>: откройте в Excel, добавляйте строки.
-            Столбцы: <code>id</code>, <code>name</code>, <code>category</code>, <code>pricePerShift</code>,
-            <code>maxQty</code> (пусто = без лимита), <code>kit</code> (необязательно). Сохраните как
-            <strong>CSV UTF-8 (разделитель — запятая)</strong> и отправьте файл в репозиторий вместе с сайтом.
-          </p>
         </div>
       </header>
 
@@ -49,9 +43,12 @@
 
         <aside class="card booking-cart">
           <h2>Корзина</h2>
-          <div class="shifts-field">
-            <label for="shifts">Съёмочных смен</label>
-            <input id="shifts" name="shifts" type="number" min="1" step="1" value="1" inputmode="numeric" />
+          <div class="date-range-field">
+            <label for="date-from">Аренда с</label>
+            <input id="date-from" name="date-from" type="date" />
+            <label for="date-to">Аренда по</label>
+            <input id="date-to" name="date-to" type="date" />
+            <p class="date-range-meta">Смен в выбранном периоде: <strong id="shifts-count">1</strong></p>
           </div>
           <p id="cart-empty" class="cart-empty">Корзина пуста — добавьте технику из каталога.</p>
           <div id="cart-lines" class="cart-lines" aria-live="polite"></div>
@@ -79,7 +76,11 @@
               Даты, площадка, пожелания
               <textarea id="client-dates" name="dates" placeholder="Например: 12–14 мая, Москва, нужен кей…"></textarea>
             </label>
-            <button id="btn-reserve" type="submit" class="btn-primary" disabled>Отправить заявку</button>
+            <div class="form-actions">
+              <button id="btn-reserve" type="submit" class="btn-primary" disabled>Оформить заявку</button>
+              <button id="btn-xl" type="button" class="btn-secondary" disabled>Открыть в XL</button>
+            </div>
+            <p id="xl-status" class="xl-status" hidden></p>
           </form>
         </aside>
       </div>

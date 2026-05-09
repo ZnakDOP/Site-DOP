@@ -1,6 +1,8 @@
 (function () {
   const CART_KEY = "site-dop-booking-cart";
   const email = "a@gorushkindop.ru";
+  const sheetWebAppUrl = document.body.dataset.sheetWebappUrl || "";
+  const sheetOpenUrl = document.body.dataset.sheetOpenUrl || "";
 
   /**
    * @type {{
@@ -16,15 +18,32 @@
     catalog: document.getElementById("catalog"),
     cartLines: document.getElementById("cart-lines"),
     cartEmpty: document.getElementById("cart-empty"),
-    shifts: document.getElementById("shifts"),
+    dateFrom: document.getElementById("date-from"),
+    dateTo: document.getElementById("date-to"),
+    shiftsCount: document.getElementById("shifts-count"),
     total: document.getElementById("cart-total"),
     form: document.getElementById("reserve-form"),
     clientName: document.getElementById("client-name"),
     clientContact: document.getElementById("client-contact"),
     clientDates: document.getElementById("client-dates"),
     btnSubmit: document.getElementById("btn-reserve"),
+    btnXl: document.getElementById("btn-xl"),
+    xlStatus: document.getElementById("xl-status"),
     loadError: document.getElementById("load-error"),
   };
+
+  function yyyyMmDd(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function initDates() {
+    const today = yyyyMmDd(new Date());
+    if (!els.dateFrom.value) els.dateFrom.value = today;
+    if (!els.dateTo.value) els.dateTo.value = els.dateFrom.value;
+  }
 
   function loadCart() {
     try {
@@ -46,9 +65,29 @@
     return new Intl.NumberFormat("ru-RU").format(n) + " " + catalog.currency;
   }
 
+  function parseDateInput(v) {
+    if (!v) return null;
+    const d = new Date(v + "T00:00:00");
+    return Number.isFinite(d.getTime()) ? d : null;
+  }
+
   function getShifts() {
-    const v = parseInt(String(els.shifts.value), 10);
-    return Number.isFinite(v) && v >= 1 ? v : 1;
+    const from = parseDateInput(els.dateFrom.value);
+    const to = parseDateInput(els.dateTo.value);
+    if (!from || !to) return 1;
+    const ms = to.getTime() - from.getTime();
+    const days = Math.floor(ms / 86400000) + 1;
+    return days >= 1 ? days : 1;
+  }
+
+  function syncDateRange() {
+    if (els.dateFrom.value && els.dateTo.value && els.dateTo.value < els.dateFrom.value) {
+      els.dateTo.value = els.dateFrom.value;
+    }
+    if (els.dateFrom.value && !els.dateTo.value) {
+      els.dateTo.value = els.dateFrom.value;
+    }
+    els.shiftsCount.textContent = String(getShifts());
   }
 
   /** @param {{ maxQty?: number }} item */
@@ -144,6 +183,7 @@
       els.cartLines.innerHTML = "";
       els.total.textContent = formatMoney(0);
       els.btnSubmit.disabled = true;
+      els.btnXl.disabled = true;
       return;
     }
 
@@ -180,6 +220,7 @@
 
     els.total.textContent = formatMoney(subtotal);
     els.btnSubmit.disabled = false;
+    els.btnXl.disabled = false;
 
     els.cartLines.querySelectorAll("button[data-act]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -227,6 +268,7 @@
     lines.push("Заявка на бронирование техники");
     lines.push("");
     lines.push(`Съёмочных смен: ${shifts}`);
+    lines.push(`Период аренды: ${els.dateFrom.value || "—"} — ${els.dateTo.value || "—"}`);
     lines.push(`Имя: ${name || "—"}`);
     lines.push(`Контакт: ${contact || "—"}`);
     lines.push(`Даты / площадка / комментарий: ${dates || "—"}`);
@@ -245,7 +287,88 @@
     return lines.join("\n");
   }
 
-  els.shifts.addEventListener("input", () => renderCart());
+  function buildCartRows() {
+    if (!catalog) return [];
+    const shifts = getShifts();
+    const rows = [];
+    for (const item of catalog.items) {
+      const qty = cart[item.id] || 0;
+      if (!qty) continue;
+      const line = qty * item.pricePerShift * shifts;
+      rows.push({
+        name: item.name,
+        qty,
+        pricePerShift: item.pricePerShift,
+        shifts,
+        total: line,
+      });
+    }
+    return rows;
+  }
+
+  function setXlStatus(text, isError) {
+    if (!els.xlStatus) return;
+    els.xlStatus.hidden = false;
+    els.xlStatus.textContent = text;
+    els.xlStatus.style.color = isError ? "#7d1e1e" : "var(--muted)";
+  }
+
+  async function openCartInXl() {
+    const rows = buildCartRows();
+    if (!rows.length || !catalog) {
+      setXlStatus("Добавьте позиции в корзину.", true);
+      return;
+    }
+
+    if (!sheetWebAppUrl || sheetWebAppUrl.includes("PASTE_")) {
+      setXlStatus("Нужно подключить Web App URL Google Apps Script в booking.html.", true);
+      return;
+    }
+    if (!sheetOpenUrl || sheetOpenUrl.includes("PASTE_")) {
+      setXlStatus("Нужно указать ссылку на Google Таблицу в booking.html.", true);
+      return;
+    }
+
+    const total = rows.reduce((acc, row) => acc + row.total, 0);
+    const payload = {
+      createdAt: new Date().toISOString(),
+      dateFrom: els.dateFrom.value || "",
+      dateTo: els.dateTo.value || "",
+      shifts: getShifts(),
+      customerName: els.clientName.value.trim(),
+      customerContact: els.clientContact.value.trim(),
+      comment: els.clientDates.value.trim(),
+      total,
+      items: rows,
+    };
+
+    try {
+      els.btnXl.disabled = true;
+      setXlStatus("Отправляю в таблицу...", false);
+      const res = await fetch(sheetWebAppUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("bad_status");
+      setXlStatus("Успешно! Открываю таблицу...", false);
+      window.open(sheetOpenUrl, "_blank", "noopener,noreferrer");
+    } catch {
+      setXlStatus("Не удалось записать в таблицу. Проверьте URL скрипта и доступы.", true);
+    } finally {
+      renderCart();
+    }
+  }
+
+  els.dateFrom.addEventListener("change", () => {
+    syncDateRange();
+    renderCart();
+  });
+  els.dateTo.addEventListener("change", () => {
+    syncDateRange();
+    renderCart();
+  });
+  els.btnXl.addEventListener("click", openCartInXl);
 
   els.form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -386,6 +509,9 @@
     return { currency: "₽", items };
   }
 
+  initDates();
+  syncDateRange();
+
   fetch("equipment.csv", { cache: "no-store" })
     .then((r) => {
       if (!r.ok) throw new Error("Не удалось загрузить каталог");
@@ -397,6 +523,7 @@
       if (!data.items.length) throw new Error("В CSV нет строк с техникой");
       catalog = data;
       pruneCart();
+      syncDateRange();
       els.loadError.hidden = true;
       renderCatalog();
       renderCart();

@@ -177,21 +177,22 @@
   margin-bottom: 4px;
 }
 
-.shifts-field {
+.date-range-field {
   margin-top: 14px;
+  display: grid;
+  gap: 6px;
 }
 
-.shifts-field label {
+.date-range-field label {
   display: block;
   font-size: 13px;
   font-weight: 600;
   color: var(--muted);
-  margin-bottom: 6px;
 }
 
-.shifts-field input {
+.date-range-field input {
   width: 100%;
-  max-width: 120px;
+  max-width: 220px;
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.75);
@@ -199,6 +200,12 @@
   font-family: inherit;
   font-size: 16px;
   color: var(--text);
+}
+
+.date-range-meta {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .cart-lines {
@@ -335,6 +342,36 @@
 .btn-primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-secondary {
+  margin-top: 4px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.52);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #10223f;
+  cursor: pointer;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.xl-status {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .booking-error {
