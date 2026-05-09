@@ -127,6 +127,28 @@
     }
   }
 
+  /**
+   * В шаблоне формулы заданы как shared (один master + clone). После spliceRows/insertRow
+   * ExcelJS при writeBuffer валится: «Shared Formula master must exist above…».
+   * Превращаем каждую ячейку в обычную формулу с явным текстом.
+   */
+  function dissolveSharedFormulasInSheet(ws, ExcelRef) {
+    const ValueType = ExcelRef.ValueType || { Formula: 6 };
+    const FormulaType = ExcelRef.FormulaType || { Master: 1, Shared: 2, None: 0 };
+    ws.eachRow({ includeEmpty: false }, (row) => {
+      row.eachCell({ includeEmpty: false }, (cell) => {
+        if (cell.type !== ValueType.Formula) return;
+        const ft = cell.formulaType;
+        if (ft === FormulaType.None) return;
+        const fText = cell.formula;
+        if (typeof fText !== "string" || !fText) return;
+        const res = cell.result;
+        cell.value =
+          res !== undefined && res !== null ? { formula: fText, result: res } : { formula: fText };
+      });
+    });
+  }
+
   function initDates() {
     if (!els.dateFrom || !els.dateTo) return;
     const today = yyyyMmDd(new Date());
@@ -616,6 +638,8 @@
         throw new Error('В шаблоне нет листа «Смета техника». Скачайте estimate-template.xlsx из репозитория.');
       }
 
+      dissolveSharedFormulasInSheet(ws, ExcelJSGlobal);
+
       const srcCatRow = ws.getRow(4);
       const srcItemRow = ws.getRow(5);
       const styleCat = srcCatRow.getCell(1).style;
@@ -685,6 +709,8 @@
       applyCellStyleSafe(sumRow.getCell(7), styleSumG);
       sumRow.getCell(8).value = { formula: `SUM(H4:H${rSum - 1})` };
       applyCellStyleSafe(sumRow.getCell(8), styleSumH);
+
+      dissolveSharedFormulasInSheet(ws, ExcelJSGlobal);
 
       const out = await wb.xlsx.writeBuffer();
       const blob = new Blob([out], {
