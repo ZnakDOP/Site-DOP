@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Бронирование техники — Arsenii Gorushkin</title>
+    <meta
+      name="description"
+      content="Корзина и бронирование съёмочного оборудования на одну или несколько смен."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="booking.css" />
+  </head>
+  <body class="booking-body">
+    <div class="booking-page">
+      <header class="booking-top card">
+        <div class="booking-intro">
+          <a class="booking-back" href="index.html">← На главную</a>
+          <h1>Бронирование техники</h1>
+          <p>
+            Добавьте позиции в корзину, укажите число съёмочных смен и отправьте заявку — откроется письмо на
+            <a href="mailto:a@gorushkindop.ru">a@gorushkindop.ru</a> с готовым текстом.
+          </p>
+          <p class="booking-hint">
+            Каталог задаётся в файле <code>equipment.json</code> — его можно синхронизировать с вашей сметой в
+            Google Таблицах (экспорт или ручное копирование).
+          </p>
+        </div>
+      </header>
+
+      <div id="load-error" class="booking-error" hidden></div>
+
+      <div class="booking-layout">
+        <section class="card booking-catalog">
+          <div class="card-inner">
+            <h2 style="font-size: 20px; margin-bottom: 4px">Каталог</h2>
+            <p class="subtitle" style="margin-top: 6px">Цены за одну смену. Итог умножается на число смен.</p>
+            <div id="catalog"></div>
+          </div>
+        </section>
+
+        <aside class="card booking-cart">
+          <h2>Корзина</h2>
+          <div class="shifts-field">
+            <label for="shifts">Съёмочных смен</label>
+            <input id="shifts" name="shifts" type="number" min="1" step="1" value="1" inputmode="numeric" />
+          </div>
+          <p id="cart-empty" class="cart-empty">Корзина пуста — добавьте технику из каталога.</p>
+          <div id="cart-lines" class="cart-lines" aria-live="polite"></div>
+          <div class="cart-total">
+            <span>Итого</span>
+            <strong id="cart-total">0 ₽</strong>
+          </div>
+
+          <form id="reserve-form" class="reserve-form">
+            <label>
+              Имя
+              <input id="client-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" />
+            </label>
+            <label>
+              Телефон или Telegram
+              <input
+                id="client-contact"
+                name="contact"
+                type="text"
+                autocomplete="tel"
+                placeholder="+7… или @username"
+              />
+            </label>
+            <label>
+              Даты, площадка, пожелания
+              <textarea id="client-dates" name="dates" placeholder="Например: 12–14 мая, Москва, нужен кей…"></textarea>
+            </label>
+            <button id="btn-reserve" type="submit" class="btn-primary" disabled>Отправить заявку</button>
+          </form>
+        </aside>
+      </div>
+    </div>
+    <script src="booking.js" defer></script>
+  </body>
+</html>

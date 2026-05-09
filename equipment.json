@@ -1,0 +1,446 @@
+{
+  "currency": "₽",
+  "items": [
+    {
+      "id": "sony-fx3-body",
+      "name": "Sony FX3 body",
+      "category": "Камера",
+      "pricePerShift": 4500,
+      "maxQty": 1,
+      "kit": "body, клетка, верхняя ручка, 1 шт акб"
+    },
+    {
+      "id": "insta360-x5",
+      "name": "INSTA 360 X5",
+      "category": "Камера",
+      "pricePerShift": 3000,
+      "maxQty": 1,
+      "kit": "Клетка, защита линз, чехол на объективы, micro SD 256 GB (max bitrate 8K), USB‑C"
+    },
+    {
+      "id": "v-mount-140-swit",
+      "name": "V-Mount 140Wh SWIT",
+      "category": "Источники питания",
+      "pricePerShift": 490,
+      "maxQty": 2
+    },
+    {
+      "id": "v-mount-99",
+      "name": "V-Mount 99Wh",
+      "category": "Источники питания",
+      "pricePerShift": 340,
+      "maxQty": 1
+    },
+    {
+      "id": "sony-np-fz100",
+      "name": "Sony NP-FZ100",
+      "category": "Источники питания",
+      "pricePerShift": 250,
+      "maxQty": 3
+    },
+    {
+      "id": "np-f970",
+      "name": "NP-F970",
+      "category": "Источники питания",
+      "pricePerShift": 400,
+      "maxQty": 1
+    },
+    {
+      "id": "np-f550",
+      "name": "NP-F550",
+      "category": "Источники питания",
+      "pricePerShift": 290,
+      "maxQty": 2
+    },
+    {
+      "id": "d-tap-21-dc",
+      "name": "D-Tap / 2.1 DC",
+      "category": "Источники питания",
+      "pricePerShift": 290,
+      "maxQty": 3
+    },
+    {
+      "id": "d-tap-4x",
+      "name": "D-Tap / 4×D-Tap",
+      "category": "Источники питания",
+      "pricePerShift": 290,
+      "maxQty": 1
+    },
+    {
+      "id": "charger-np-fz100",
+      "name": "Зарядное устройство для NP-FZ100 (на 2 акб)",
+      "category": "Источники питания",
+      "pricePerShift": 290,
+      "maxQty": 1,
+      "kit": "Блок питания, USB‑C"
+    },
+    {
+      "id": "accsoon-npf-vplate",
+      "name": "Accsoon NP-F to V-Mount Battery Plate (CineView M7 Series)",
+      "category": "Источники питания",
+      "pricePerShift": 500,
+      "maxQty": 1
+    },
+    {
+      "id": "cable-usbc-100w",
+      "name": "Кабель 100W USB‑C to USB‑C",
+      "category": "Источники питания",
+      "pricePerShift": 190,
+      "maxQty": 5
+    },
+    {
+      "id": "tamron-28-75-g2",
+      "name": "Tamron 28-75mm f/2.8 Di III VXD G2 (Sony E)",
+      "category": "Объективы / фильтры / переходники",
+      "pricePerShift": 1190,
+      "maxQty": 1
+    },
+    {
+      "id": "dzofilm-octopus-pl-e",
+      "name": "Переходник DZOFilm Octopus (ARRI PL → Sony E)",
+      "category": "Объективы / фильтры / переходники",
+      "pricePerShift": 590,
+      "maxQty": 1
+    },
+    {
+      "id": "kf-nd-cpl-82",
+      "name": "Фильтр K&F Concept Nano-X Variable ND2-32 CPL MRC 82mm",
+      "category": "Объективы / фильтры / переходники",
+      "pricePerShift": 890,
+      "maxQty": 1,
+      "kit": "Чехол"
+    },
+    {
+      "id": "step-ring-82-67",
+      "name": "Переходное кольцо 82mm → 67mm",
+      "category": "Объективы / фильтры / переходники",
+      "pricePerShift": 50,
+      "maxQty": 1
+    },
+    {
+      "id": "dune-filter-82",
+      "name": "Светофильтр DUNE FILTER 82mm",
+      "category": "Объективы / фильтры / переходники",
+      "pricePerShift": 500,
+      "maxQty": 1,
+      "kit": "Чехол, тряпочка"
+    },
+    {
+      "id": "dji-rs3-pro",
+      "name": "DJI RS 3 Pro",
+      "category": "Штативы / стабилизация",
+      "pricePerShift": 2190,
+      "maxQty": 1,
+      "kit": "Подвес, провода, доп. передняя ручка"
+    },
+    {
+      "id": "tilta-ring-dji-rs3",
+      "name": "Кольцевая рукоятка Tilta для DJI RS 3 Pro",
+      "category": "Штативы / стабилизация",
+      "pricePerShift": 1000,
+      "maxQty": 1,
+      "kit": "Площадка под V-Mount, верхняя площадка с D-Tap, кейс"
+    },
+    {
+      "id": "smallrig-tripod-3751b",
+      "name": "Видеоштатив SmallRig 3751B",
+      "category": "Штативы / стабилизация",
+      "pricePerShift": 1000,
+      "maxQty": 1,
+      "kit": "Транспортировочный чехол"
+    },
+    {
+      "id": "accsoon-seemo-ipad",
+      "name": "Accsoon SeeMo Pro + iPad 13 Pro в клетке",
+      "category": "Мониторы / передача изображения",
+      "pricePerShift": 3500,
+      "maxQty": 1,
+      "kit": "Клетка, площадка V-Mount, HDMI‑HDMI, USB‑C"
+    },
+    {
+      "id": "accsoon-cinemaster-4k",
+      "name": "Accsoon CineMaster 4K",
+      "category": "Мониторы / передача изображения",
+      "pricePerShift": 2290,
+      "maxQty": 1
+    },
+    {
+      "id": "accsoon-vlock-adapter",
+      "name": "Accsoon V-Lock Adapter",
+      "category": "Мониторы / передача изображения",
+      "pricePerShift": 650,
+      "maxQty": 1
+    },
+    {
+      "id": "accsoon-cineview-m7",
+      "name": "Accsoon CineView M7 Pro (монитор-приёмник)",
+      "category": "Мониторы / передача изображения",
+      "pricePerShift": 2000,
+      "maxQty": 1,
+      "kit": "Клетка, флешка 64 GB"
+    },
+    {
+      "id": "radio-wln-kd-c1",
+      "name": "Рация WLN KD-C1 Plus",
+      "category": "Звук",
+      "pricePerShift": 290,
+      "maxQty": 4,
+      "kit": "Зарядные устройства"
+    },
+    {
+      "id": "hollyland-solidcom-se",
+      "name": "Беспроводной интерком Hollyland Solidcom SE — 5S",
+      "category": "Звук",
+      "pricePerShift": 1000,
+      "maxQty": 5,
+      "kit": "5 доп. АКБ, зарядка, транспортировочный кейс"
+    },
+    {
+      "id": "dji-mic-2",
+      "name": "Радиосистема DJI Mic 2 (2TX + RX)",
+      "category": "Звук",
+      "pricePerShift": 750,
+      "maxQty": 1,
+      "kit": "Наушники, телесный тейп, ветрозащита, USB‑C, USB‑B"
+    },
+    {
+      "id": "rode-lavalier-ii",
+      "name": "Микрофон петличный Rode Lavalier II",
+      "category": "Звук",
+      "pricePerShift": 790,
+      "maxQty": 1,
+      "kit": "Чехол, поп-фильтр, ветрозащита, клипсы, крепёжная гайка"
+    },
+    {
+      "id": "rode-videomic-pro",
+      "name": "Микрофон-пушка Rode VideoMic Pro",
+      "category": "Звук",
+      "pricePerShift": 390,
+      "maxQty": 1,
+      "kit": "Ветрозащита, батарейка"
+    },
+    {
+      "id": "hdmi-05m-thin",
+      "name": "Кабель HDMI‑HDMI 4K 0,5 м (тонкий)",
+      "category": "Коммутация",
+      "pricePerShift": 190,
+      "maxQty": 3
+    },
+    {
+      "id": "hdmi-1m",
+      "name": "Кабель HDMI‑HDMI 4K 1 м",
+      "category": "Коммутация",
+      "pricePerShift": 230,
+      "maxQty": 1
+    },
+    {
+      "id": "hdmi-5m",
+      "name": "Кабель HDMI‑HDMI 4K 5 м",
+      "category": "Коммутация",
+      "pricePerShift": 300,
+      "maxQty": 1
+    },
+    {
+      "id": "hdmi-20m",
+      "name": "Кабель HDMI‑HDMI 4K 20 м",
+      "category": "Коммутация",
+      "pricePerShift": 900,
+      "maxQty": 2
+    },
+    {
+      "id": "cable-dt-lm-dtap-lemo",
+      "name": "Кабель питания DT-LM D-tap → Lemo 2-pin",
+      "category": "Коммутация",
+      "pricePerShift": 200,
+      "maxQty": 1
+    },
+    {
+      "id": "extension-reel-10m",
+      "name": "Сетевой удлинитель на катушке 10 м (2200 W)",
+      "category": "Коммутация",
+      "pricePerShift": 290,
+      "maxQty": 2
+    },
+    {
+      "id": "magic-arm-smallrig-m",
+      "name": "Magic Arm SmallRig (средний)",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 290,
+      "maxQty": 1
+    },
+    {
+      "id": "magic-arm-smallrig-s",
+      "name": "Magic Arm SmallRig (маленький)",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 290,
+      "maxQty": 1
+    },
+    {
+      "id": "clamp-smallrig",
+      "name": "Клэмп SmallRig Clamp",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 290,
+      "maxQty": 1
+    },
+    {
+      "id": "clamp-magic-2",
+      "name": "Клэмп + мэджик",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 300,
+      "maxQty": 2
+    },
+    {
+      "id": "smallrig-side-handle",
+      "name": "Боковая ручка камеры SmallRig",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 290,
+      "maxQty": 2
+    },
+    {
+      "id": "rod-support-30-15",
+      "name": "Суппорт 30 см — 15 мм",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 190,
+      "maxQty": 2
+    },
+    {
+      "id": "rod-support-15-15",
+      "name": "Суппорт 15 см — 15 мм",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 190,
+      "maxQty": 2
+    },
+    {
+      "id": "tilta-baseplate-lws-ii",
+      "name": "Быстросъёмная площадка Tilta 15mm LWS Baseplate Type II",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 780,
+      "maxQty": 1
+    },
+    {
+      "id": "ulanzi-falcam-baseplate",
+      "name": "Базовая площадка Ulanzi Falcam Baseplate",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 500,
+      "maxQty": 1
+    },
+    {
+      "id": "onecine-v7-adapter",
+      "name": "Адаптер с быстросъёмной площадкой OneCine V7",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 150,
+      "maxQty": 1
+    },
+    {
+      "id": "smallrig-lens-support",
+      "name": "Поддержка объективов SmallRig",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 450,
+      "maxQty": 2
+    },
+    {
+      "id": "v-mount-plate-plain",
+      "name": "Площадка V-Mount (без портов)",
+      "category": "Держатели и Magic Arm",
+      "pricePerShift": 590,
+      "maxQty": 2
+    },
+    {
+      "id": "sandisk-sd-256-v30",
+      "name": "Карта памяти SanDisk SDXC 256 GB V30 200 MB/s",
+      "category": "Память",
+      "pricePerShift": 700,
+      "maxQty": 2,
+      "kit": "Кейс"
+    },
+    {
+      "id": "ssd-t7-1tb",
+      "name": "SSD Samsung T7 1 TB",
+      "category": "Память",
+      "pricePerShift": 790,
+      "maxQty": 2,
+      "kit": "USB‑C"
+    },
+    {
+      "id": "ssd-t7-2tb",
+      "name": "SSD Samsung T7 2 TB",
+      "category": "Память",
+      "pricePerShift": 900,
+      "maxQty": 1,
+      "kit": "USB‑C"
+    },
+    {
+      "id": "hdd-seagate-4tb",
+      "name": "HDD Seagate One Touch 4 TB",
+      "category": "Память",
+      "pricePerShift": 800,
+      "maxQty": 2,
+      "kit": "USB‑B, USB‑C"
+    },
+    {
+      "id": "lexar-card-reader",
+      "name": "Картридер Lexar (SD / microSD) → USB‑C",
+      "category": "Память",
+      "pricePerShift": 500,
+      "maxQty": 1
+    },
+    {
+      "id": "aputure-accent-b7c",
+      "name": "Лампа Aputure Accent B7C",
+      "category": "Свет",
+      "pricePerShift": 790,
+      "maxQty": 1
+    },
+    {
+      "id": "amaran-200x-s",
+      "name": "LED Aputure Amaran 200X S 2700–6500K",
+      "category": "Свет",
+      "pricePerShift": 990,
+      "maxQty": 1
+    },
+    {
+      "id": "softbox-90-bowens",
+      "name": "Параболический быстрораскладной софтбокс 90 (Bowens)",
+      "category": "Свет",
+      "pricePerShift": 300,
+      "maxQty": 1,
+      "kit": "Чехол, софт 1/2, без сот"
+    },
+    {
+      "id": "amaran-ace-25c",
+      "name": "Светодиодный осветитель Amaran Ace 25c",
+      "category": "Свет",
+      "pricePerShift": 690,
+      "maxQty": 1,
+      "kit": "Рассеиватель"
+    },
+    {
+      "id": "c-stand-40",
+      "name": "C-Stand 40",
+      "category": "Свет",
+      "pricePerShift": 500,
+      "maxQty": 1
+    },
+    {
+      "id": "extension-arm-40",
+      "name": "Extension Arm 40",
+      "category": "Свет",
+      "pricePerShift": 150,
+      "maxQty": 1
+    },
+    {
+      "id": "grip-head",
+      "name": "Grip Head",
+      "category": "Свет",
+      "pricePerShift": 150,
+      "maxQty": 1
+    },
+    {
+      "id": "sandbag-5kg",
+      "name": "SandBag 5 кг",
+      "category": "Свет",
+      "pricePerShift": 150,
+      "maxQty": 1
+    }
+  ]
+}
