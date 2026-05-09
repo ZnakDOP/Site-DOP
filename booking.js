@@ -1,4 +1,9 @@
 (function () {
+  const __bookingScriptSrc =
+    typeof document !== "undefined" && document.currentScript && document.currentScript.src
+      ? document.currentScript.src
+      : "";
+
   const CART_KEY = "site-dop-booking-cart";
   const email = "a@gorushkindop.ru";
 
@@ -50,27 +55,75 @@
 
   /** Рядом с booking.js (важно для GitHub Pages и нестандартных путей). */
   function resolveAssetUrl(filename) {
-    const scriptEl = document.querySelector('script[src*="booking.js"]');
-    if (scriptEl && scriptEl.src) {
+    const scriptEl =
+      __bookingScriptSrc || document.querySelector('script[src*="booking.js"]')?.src || "";
+    if (scriptEl) {
       try {
-        return new URL(filename, scriptEl.src).href;
+        return new URL(filename, scriptEl).href;
       } catch {
         /* use page URL */
       }
     }
-    return new URL(filename, window.location.href).href;
+    try {
+      return new URL(filename, document.baseURI).href;
+    } catch {
+      return new URL(filename, window.location.href).href;
+    }
   }
 
   /**
-   * ExcelJS при spliceRows/insertRow часто портит merge-метаданные → падение writeBuffer / битый xlsx.
-   * Снимаем объединения в области листа (шапка + смета), затем заново мерджим только нужное.
+   * ExcelJS при spliceRows/insertRow ломает merge, если _merges не синхронизирован.
+   * Снимаем каждое объединение по модели Range из _merges (надёжнее, чем один прямоугольник A1:Hn).
    */
-  function stripMergesThroughRow(worksheet, lastRow) {
-    const bottom = Math.min(500, Math.max(32, lastRow + 10));
+  function stripAllMerges(worksheet) {
+    for (let pass = 0; pass < 80; pass++) {
+      const merges = worksheet._merges;
+      if (!merges || typeof merges !== "object") break;
+      const keys = Object.keys(merges);
+      if (!keys.length) break;
+      for (const k of keys) {
+        const dim = merges[k];
+        if (!dim) continue;
+        const t = dim.top;
+        const l = dim.left;
+        const b = dim.bottom;
+        const r = dim.right;
+        if (typeof t === "number" && typeof l === "number" && typeof b === "number" && typeof r === "number") {
+          try {
+            worksheet.unMergeCells(t, l, b, r);
+          } catch {
+            try {
+              const ref = typeof dim.range === "string" ? dim.range.replace(/^[^!]*!/, "") : "";
+              if (ref) worksheet.unMergeCells(ref);
+            } catch {
+              /* */
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function assertXlsxZipBuffer(buf) {
+    const u8 = new Uint8Array(buf);
+    if (u8.length < 4 || u8[0] !== 0x50 || u8[1] !== 0x4b) {
+      const snippet = new TextDecoder("utf-8", { fatal: false }).decode(u8.slice(0, 120));
+      throw new Error(
+        "Сервер отдал не .xlsx (нет сигнатуры ZIP). Часто это HTML-страница 404. URL: " +
+          resolveAssetUrl("estimate-template.xlsx") +
+          (snippet.includes("<!DOCTYPE") || snippet.includes("<html")
+            ? " — в ответе похоже HTML."
+            : ""),
+      );
+    }
+  }
+
+  function applyCellStyleSafe(cell, style) {
+    if (!style) return;
     try {
-      worksheet.unMergeCells(`A1:H${bottom}`);
-    } catch {
-      /* редкий сбой Range — дальше splice всё равно может упасть; текст ошибки покажем в catch openCartInXl */
+      cell.style = style;
+    } catch (e) {
+      console.warn("applyCellStyleSafe", e);
     }
   }
 
@@ -548,11 +601,20 @@
       }
 
       const buf = await res.arrayBuffer();
-      const wb = new ExcelJSGlobal.Workbook();
-      await wb.xlsx.load(buf);
+      assertXlsxZipBuffer(buf);
+
+      let wb = new ExcelJSGlobal.Workbook();
+      try {
+        await wb.xlsx.load(buf);
+      } catch {
+        wb = new ExcelJSGlobal.Workbook();
+        await wb.xlsx.load(new Uint8Array(buf));
+      }
 
       const ws = wb.getWorksheet("Смета техника");
-      if (!ws) throw new Error("no_sheet");
+      if (!ws) {
+        throw new Error('В шаблоне нет листа «Смета техника». Скачайте estimate-template.xlsx из репозитория.');
+      }
 
       const srcCatRow = ws.getRow(4);
       const srcItemRow = ws.getRow(5);
@@ -569,7 +631,7 @@
       ws.eachRow((row, rowNumber) => {
         if (rowNumber > maxR) maxR = rowNumber;
       });
-      stripMergesThroughRow(ws, maxR);
+      stripAllMerges(ws);
 
       if (maxR > 3) ws.spliceRows(4, maxR - 3);
 
@@ -597,7 +659,7 @@
           }
           const a = row.getCell(1);
           a.value = b.name;
-          a.style = styleCat;
+          applyCellStyleSafe(a, styleCat);
           if (srcCatRow.height) row.height = srcCatRow.height;
         } else {
           row.getCell(1).value = b.item.name;
@@ -610,7 +672,7 @@
           row.getCell(8).value = { formula: `F${r}*(1-G${r}%)` };
           for (let c = 1; c <= 8; c++) {
             const st = styleItemCells[c];
-            if (st) row.getCell(c).style = st;
+            if (st) applyCellStyleSafe(row.getCell(c), st);
           }
           if (srcItemRow.height) row.height = srcItemRow.height;
         }
@@ -620,9 +682,9 @@
       const rSum = r;
       const sumRow = ws.getRow(rSum);
       sumRow.getCell(7).value = "Итог";
-      sumRow.getCell(7).style = styleSumG;
+      applyCellStyleSafe(sumRow.getCell(7), styleSumG);
       sumRow.getCell(8).value = { formula: `SUM(H4:H${rSum - 1})` };
-      sumRow.getCell(8).style = styleSumH;
+      applyCellStyleSafe(sumRow.getCell(8), styleSumH);
 
       const out = await wb.xlsx.writeBuffer();
       const blob = new Blob([out], {
