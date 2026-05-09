@@ -45,13 +45,17 @@
   }
 
   if (!prefersReduced && "IntersectionObserver" in window) {
+    const narrow = window.matchMedia("(max-width: 768px)").matches
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) e.target.classList.add("reveal--visible")
         })
       },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+      {
+        rootMargin: narrow ? "0px 0px -4% 0px" : "0px 0px -8% 0px",
+        threshold: narrow ? 0.04 : 0.08,
+      }
     )
     document.querySelectorAll(".reveal").forEach((el) => io.observe(el))
   } else {

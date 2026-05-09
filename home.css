@@ -1,6 +1,7 @@
 /* gorushkindop.com — home (Lucien-adjacent dark UI, kochubeevdop-style IA) */
 
 :root {
+  color-scheme: dark;
   --bg0: #060608;
   --bg1: #0c0c10;
   --surface: rgba(255, 255, 255, 0.03);
@@ -155,8 +156,9 @@ body.site-nav-open {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: env(safe-area-inset-top, 0px) max(var(--space), env(safe-area-inset-right)) 0
-    max(var(--space), env(safe-area-inset-left));
+  padding: env(safe-area-inset-top, 0px)
+    max(var(--space), var(--space-floor, 0px), env(safe-area-inset-right, 0px)) 0
+    max(var(--space), var(--space-floor, 0px), env(safe-area-inset-left, 0px));
   min-height: var(--header-offset);
   border-bottom: 1px solid var(--stroke);
   background: rgba(6, 6, 8, 0.72);
@@ -220,6 +222,19 @@ body.site-nav-open {
   border-bottom-color: var(--accent);
 }
 
+.site-header__brand:focus-visible,
+.site-header__menu-btn:focus-visible,
+.site-header__nav a:focus-visible,
+.btn:focus-visible,
+.link-card:focus-visible,
+.work-tile:focus-visible,
+.contact-pill:focus-visible,
+.rental-cta a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .site-header__menu-btn {
   display: none;
   flex-shrink: 0;
@@ -246,9 +261,12 @@ body.site-nav-open {
   border-radius: 1px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   :root {
     --header-h: 56px;
+    /* Заметные поля на телефоне и планшете: не меньше 24px, до ~40px по vw */
+    --space-floor: 1.5rem;
+    --space: max(var(--space-floor), min(6.5vw, 2.5rem));
   }
 
   .site-header__menu-btn {
@@ -265,8 +283,9 @@ body.site-nav-open {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 0.75rem max(20px, var(--space), env(safe-area-inset-left))
-      max(2.25rem, env(safe-area-inset-bottom)) max(20px, var(--space), env(safe-area-inset-right));
+    padding: 0.75rem max(var(--space), var(--space-floor, 1.5rem), env(safe-area-inset-left, 0px))
+      max(2.25rem, env(safe-area-inset-bottom, 0px))
+      max(var(--space), var(--space-floor, 1.5rem), env(safe-area-inset-right, 0px));
     background: rgba(6, 6, 8, 0.98);
     border-bottom: 1px solid var(--stroke);
     transform: translateY(-100%);
@@ -308,8 +327,9 @@ body.site-nav-open {
 .wrap {
   width: min(var(--max), 100%);
   margin: 0 auto;
-  padding-left: max(var(--space), env(safe-area-inset-left));
-  padding-right: max(var(--space), env(safe-area-inset-right));
+  /* Боковой воздух: тема + вырез; на телефонах не уже ~24px с каждой стороны */
+  padding-left: max(var(--space), var(--space-floor, 0px), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--space), var(--space-floor, 0px), env(safe-area-inset-right, 0px));
 }
 
 /* ——— Hero ——— */
@@ -520,6 +540,7 @@ body.site-nav-open {
 /* ——— Sections ——— */
 .section {
   padding: clamp(56px, 10vw, 100px) 0;
+  scroll-margin-top: calc(var(--header-offset) + 10px);
 }
 
 .section__head {
@@ -608,6 +629,7 @@ body.site-nav-open {
   color: var(--text);
   overflow: hidden;
   background: var(--surface);
+  touch-action: manipulation;
   transition:
     border-color 0.25s ease,
     transform 0.25s ease;
@@ -632,12 +654,20 @@ body.site-nav-open {
 
 .work-tile:hover {
   border-color: var(--stroke2);
-  transform: translateY(-3px);
 }
 
 .work-tile:hover::before {
   opacity: 0.62;
-  transform: scale(1.04);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-tile:hover {
+    transform: translateY(-3px);
+  }
+
+  .work-tile:hover::before {
+    transform: scale(1.04);
+  }
 }
 
 .work-tile--1::before {
@@ -703,6 +733,7 @@ body.site-nav-open {
   background: var(--surface);
   text-decoration: none;
   color: inherit;
+  touch-action: manipulation;
   transition:
     border-color 0.2s ease,
     background 0.2s ease;
@@ -776,6 +807,7 @@ body.site-nav-open {
   font-weight: 500;
   text-decoration: none;
   border-bottom: 1px solid rgba(94, 234, 212, 0.35);
+  touch-action: manipulation;
 }
 
 .rental-cta a:hover {
@@ -805,6 +837,7 @@ body.site-nav-open {
   background: var(--surface);
   text-decoration: none;
   color: var(--text);
+  touch-action: manipulation;
   transition: border-color 0.2s ease;
 }
 
@@ -886,8 +919,8 @@ body.site-nav-open {
 /* ——— Mobile & small screens ——— */
 @media (max-width: 768px) {
   :root {
-    /* Боковые поля ~20–28px; с safe-area считается в .wrap и шапке */
-    --space: clamp(20px, 5.5vw, 28px);
+    --space-floor: 1.5rem;
+    --space: max(var(--space-floor), min(7vw, 2.5rem));
   }
 
   .site-main {
@@ -1091,8 +1124,9 @@ body.site-nav-open {
   }
 
   .site-footer {
-    padding: 2.25rem max(var(--space), env(safe-area-inset-left)) max(2.5rem, env(safe-area-inset-bottom))
-      max(var(--space), env(safe-area-inset-right));
+    padding: 2.25rem max(var(--space), var(--space-floor), env(safe-area-inset-left, 0px))
+      max(2.5rem, env(safe-area-inset-bottom, 0px))
+      max(var(--space), var(--space-floor), env(safe-area-inset-right, 0px));
   }
 
   .site-footer__inner {
@@ -1110,6 +1144,96 @@ body.site-nav-open {
     width: 100%;
     max-width: none;
     margin-top: 1.35rem;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .hero__strip-inner {
+    will-change: transform;
+  }
+}
+
+/* Узкие телефоны */
+@media (max-width: 480px) {
+  :root {
+    --space-floor: 1.5rem;
+    --space: max(var(--space-floor), min(7.5vw, 2.25rem));
+  }
+
+  .hero {
+    padding: clamp(28px, 8vw, 48px) 0 clamp(28px, 7vw, 40px);
+  }
+
+  .hero__title {
+    font-size: clamp(1.65rem, 9.5vw, 2.35rem);
+    line-height: 1.05;
+  }
+
+  .hero__lead {
+    font-size: 15px;
+  }
+
+  .section {
+    padding: clamp(40px, 9vw, 64px) 0;
+  }
+
+  .section__title {
+    font-size: clamp(1.28rem, 5.8vw, 1.65rem);
+  }
+
+  .work-tile {
+    min-height: 152px;
+    border-radius: 14px;
+  }
+
+  .link-card,
+  .rental-card,
+  .stat-board {
+    border-radius: 14px;
+  }
+
+  .site-loader__mark {
+    letter-spacing: 0.18em;
+    font-size: 10px;
+    padding: 0 max(var(--space), var(--space-floor));
+    text-align: center;
+  }
+}
+
+/* Телефон в альбомной ориентации — меньше вертикального воздуха */
+@media (max-width: 896px) and (max-height: 460px) and (orientation: landscape) {
+  .hero {
+    padding: 20px 0 24px;
+  }
+
+  .hero__grid {
+    gap: 16px;
+    align-items: start;
+  }
+
+  .hero__title {
+    font-size: clamp(1.45rem, 5.5vw, 2rem);
+  }
+
+  .hero__lead {
+    font-size: 14px;
+    margin-top: 0.85rem;
+  }
+
+  .hero__actions {
+    margin-top: 1rem;
+  }
+
+  .stat-board {
+    padding: 1rem 1.1rem;
+  }
+
+  .stat-board__item strong {
+    font-size: 1.2rem;
+  }
+
+  .hero__strip {
+    margin-top: 20px;
   }
 }
 
