@@ -40,6 +40,7 @@
   }
 
   function initDates() {
+    if (!els.dateFrom || !els.dateTo) return;
     const today = yyyyMmDd(new Date());
     if (!els.dateFrom.value) els.dateFrom.value = today;
     if (!els.dateTo.value) els.dateTo.value = els.dateFrom.value;
@@ -72,6 +73,7 @@
   }
 
   function getShifts() {
+    if (!els.dateFrom || !els.dateTo) return 1;
     const from = parseDateInput(els.dateFrom.value);
     const to = parseDateInput(els.dateTo.value);
     if (!from || !to) return 1;
@@ -81,6 +83,7 @@
   }
 
   function syncDateRange() {
+    if (!els.dateFrom || !els.dateTo || !els.shiftsCount) return;
     if (els.dateFrom.value && els.dateTo.value && els.dateTo.value < els.dateFrom.value) {
       els.dateTo.value = els.dateFrom.value;
     }
@@ -183,7 +186,7 @@
       els.cartLines.innerHTML = "";
       els.total.textContent = formatMoney(0);
       els.btnSubmit.disabled = true;
-      els.btnXl.disabled = true;
+      if (els.btnXl) els.btnXl.disabled = true;
       return;
     }
 
@@ -220,7 +223,7 @@
 
     els.total.textContent = formatMoney(subtotal);
     els.btnSubmit.disabled = false;
-    els.btnXl.disabled = false;
+    if (els.btnXl) els.btnXl.disabled = false;
 
     els.cartLines.querySelectorAll("button[data-act]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -343,7 +346,7 @@
     };
 
     try {
-      els.btnXl.disabled = true;
+      if (els.btnXl) els.btnXl.disabled = true;
       setXlStatus("Отправляю в таблицу...", false);
       const res = await fetch(sheetWebAppUrl, {
         method: "POST",
@@ -360,15 +363,19 @@
     }
   }
 
-  els.dateFrom.addEventListener("change", () => {
-    syncDateRange();
-    renderCart();
-  });
-  els.dateTo.addEventListener("change", () => {
-    syncDateRange();
-    renderCart();
-  });
-  els.btnXl.addEventListener("click", openCartInXl);
+  if (els.dateFrom) {
+    els.dateFrom.addEventListener("change", () => {
+      syncDateRange();
+      renderCart();
+    });
+  }
+  if (els.dateTo) {
+    els.dateTo.addEventListener("change", () => {
+      syncDateRange();
+      renderCart();
+    });
+  }
+  if (els.btnXl) els.btnXl.addEventListener("click", openCartInXl);
 
   els.form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -445,7 +452,12 @@
 
   function catalogFromCsvRows(rows) {
     if (!rows.length) throw new Error("Пустой CSV");
-    const header = rows[0].map((h) => String(h).trim().toLowerCase());
+    const header = rows[0].map((h) =>
+      String(h)
+        .replace(/^\uFEFF/, "")
+        .trim()
+        .toLowerCase(),
+    );
     const col = (name) => header.indexOf(name);
     const idx = {
       id: col("id"),
@@ -512,9 +524,11 @@
   initDates();
   syncDateRange();
 
-  fetch("equipment.csv", { cache: "no-store" })
+  const equipmentCsvUrl = new URL("equipment.csv", window.location.href).href;
+
+  fetch(equipmentCsvUrl, { cache: "no-store" })
     .then((r) => {
-      if (!r.ok) throw new Error("Не удалось загрузить каталог");
+      if (!r.ok) throw new Error("HTTP " + r.status + " при загрузке equipment.csv");
       return r.text();
     })
     .then((text) => {
@@ -524,13 +538,21 @@
       catalog = data;
       pruneCart();
       syncDateRange();
-      els.loadError.hidden = true;
+      if (els.loadError) els.loadError.hidden = true;
       renderCatalog();
       renderCart();
     })
-    .catch(() => {
-      els.loadError.hidden = false;
-      els.loadError.textContent =
-        "Не удалось загрузить equipment.csv. Проверьте файл или откройте сайт через локальный сервер (не file://).";
+    .catch((err) => {
+      if (els.loadError) {
+        els.loadError.hidden = false;
+        els.loadError.textContent =
+          "Не удалось загрузить каталог (equipment.csv). " +
+          (err && err.message ? err.message : "") +
+          " Убедитесь, что файл есть на сервере и страница открыта по http(s), не file://.";
+      }
+      if (els.catalog) {
+        els.catalog.innerHTML =
+          '<p class="catalog-fallback">Каталог не загрузился. Проверьте, что в корне сайта лежит файл equipment.csv и он попал в деплой.</p>';
+      }
     });
 })();

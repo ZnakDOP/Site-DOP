@@ -92,6 +92,13 @@
   color: #1a3054;
 }
 
+.catalog-fallback {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .equipment-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -350,22 +357,8 @@
   gap: 8px;
 }
 
-.btn-secondary {
-  margin-top: 4px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.52);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  color: #10223f;
-  cursor: pointer;
-}
-
-.btn-secondary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+.form-actions .btn-primary {
+  margin-top: 0;
 }
 
 .xl-status {
