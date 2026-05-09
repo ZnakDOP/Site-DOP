@@ -1,8 +1,6 @@
 (function () {
   const CART_KEY = "site-dop-booking-cart";
   const email = "a@gorushkindop.ru";
-  const sheetWebAppUrl = document.body.dataset.sheetWebappUrl || "";
-  const sheetOpenUrl = document.body.dataset.sheetOpenUrl || "";
 
   /**
    * @type {{
@@ -34,6 +32,7 @@
     total: document.getElementById("cart-total"),
     form: document.getElementById("reserve-form"),
     clientName: document.getElementById("client-name"),
+    clientProject: document.getElementById("client-project"),
     clientContact: document.getElementById("client-contact"),
     clientDates: document.getElementById("client-dates"),
     btnSubmit: document.getElementById("btn-reserve"),
@@ -416,6 +415,7 @@
   function buildMailBody() {
     const shifts = getShifts();
     const name = els.clientName.value.trim();
+    const project = els.clientProject ? els.clientProject.value.trim() : "";
     const contact = els.clientContact.value.trim();
     const dates = els.clientDates.value.trim();
     const lines = [];
@@ -424,6 +424,7 @@
     lines.push(`Съёмочных смен: ${shifts}`);
     lines.push(`Период аренды: ${els.dateFrom.value || "—"} — ${els.dateTo.value || "—"}`);
     lines.push(`Имя: ${name || "—"}`);
+    lines.push(`Проект: ${project || "—"}`);
     lines.push(`Контакт: ${contact || "—"}`);
     lines.push(`Даты / площадка / комментарий: ${dates || "—"}`);
     lines.push("");
@@ -460,6 +461,27 @@
     return rows;
   }
 
+  /**
+   * @returns {{ kind: "cat", name: string } | { kind: "item", item: { name: string, pricePerShift: number }, qty: number }}[]
+   */
+  function buildGroupedEstimateBlocks() {
+    if (!catalog) return [];
+    const byCat = new Map();
+    for (const item of catalog.items) {
+      const qty = cart[item.id] || 0;
+      if (!qty) continue;
+      if (!byCat.has(item.category)) byCat.set(item.category, []);
+      byCat.get(item.category).push({ item, qty });
+    }
+    /** @type {{ kind: "cat", name: string } | { kind: "item", item: typeof catalog.items[0], qty: number }}[] */
+    const blocks = [];
+    for (const [catName, list] of byCat) {
+      blocks.push({ kind: "cat", name: catName });
+      for (const row of list) blocks.push({ kind: "item", item: row.item, qty: row.qty });
+    }
+    return blocks;
+  }
+
   function setXlStatus(text, isError) {
     if (!els.xlStatus) return;
     els.xlStatus.hidden = false;
@@ -468,47 +490,122 @@
   }
 
   async function openCartInXl() {
-    const rows = buildCartRows();
-    if (!rows.length || !catalog) {
+    const blocks = buildGroupedEstimateBlocks();
+    if (!blocks.length || !catalog) {
       setXlStatus("Добавьте позиции в корзину.", true);
       return;
     }
 
-    if (!sheetWebAppUrl || sheetWebAppUrl.includes("PASTE_")) {
-      setXlStatus("Нужно подключить Web App URL Google Apps Script в booking.html.", true);
-      return;
-    }
-    if (!sheetOpenUrl || sheetOpenUrl.includes("PASTE_")) {
-      setXlStatus("Нужно указать ссылку на Google Таблицу в booking.html.", true);
+    const ExcelJSGlobal = window.ExcelJS;
+    if (!ExcelJSGlobal) {
+      setXlStatus("Не загрузилась библиотека Excel (ExcelJS). Проверьте интернет и обновите страницу.", true);
       return;
     }
 
-    const total = rows.reduce((acc, row) => acc + row.total, 0);
-    const payload = {
-      createdAt: new Date().toISOString(),
-      dateFrom: els.dateFrom.value || "",
-      dateTo: els.dateTo.value || "",
-      shifts: getShifts(),
-      customerName: els.clientName.value.trim(),
-      customerContact: els.clientContact.value.trim(),
-      comment: els.clientDates.value.trim(),
-      total,
-      items: rows,
-    };
+    const projectTitle =
+      (els.clientProject && els.clientProject.value.trim()) ||
+      (els.clientName && els.clientName.value.trim()) ||
+      "Смета Znak Rent";
+    const shifts = getShifts();
 
     try {
       if (els.btnXl) els.btnXl.disabled = true;
-      setXlStatus("Отправляю в таблицу...", false);
-      const res = await fetch(sheetWebAppUrl, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
+      setXlStatus("Собираю смету в Excel…", false);
+
+      const tplUrl = new URL("estimate-template.xlsx", window.location.href);
+      tplUrl.searchParams.set("v", "tochka-blog-1");
+      const res = await fetch(tplUrl.href, { cache: "no-store" });
+      if (!res.ok) throw new Error("template_http_" + res.status);
+
+      const buf = await res.arrayBuffer();
+      const wb = new ExcelJSGlobal.Workbook();
+      await wb.xlsx.load(buf);
+
+      const ws = wb.getWorksheet("Смета техника");
+      if (!ws) throw new Error("no_sheet");
+
+      const srcCatRow = ws.getRow(4);
+      const srcItemRow = ws.getRow(5);
+      const styleCat = srcCatRow.getCell(1).style;
+      /** @type {Record<number, object | undefined>} */
+      const styleItemCells = {};
+      srcItemRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        styleItemCells[colNumber] = cell.style;
       });
-      if (!res.ok) throw new Error("bad_status");
-      setXlStatus("Успешно! Открываю таблицу...", false);
-      window.open(sheetOpenUrl, "_blank", "noopener,noreferrer");
+      const styleSumG = ws.getCell("G37").style;
+      const styleSumH = ws.getCell("H37").style;
+
+      let maxR = 3;
+      ws.eachRow((row, rowNumber) => {
+        if (rowNumber > maxR) maxR = rowNumber;
+      });
+      if (maxR > 3) ws.spliceRows(4, maxR - 3);
+
+      const totalInserted = blocks.length + 1;
+      for (let i = 0; i < totalInserted; i++) {
+        ws.insertRow(4);
+      }
+
+      ws.getCell("A1").value = projectTitle;
+
+      let r = 4;
+      for (const b of blocks) {
+        const row = ws.getRow(r);
+        if (b.kind === "cat") {
+          try {
+            ws.mergeCells(`A${r}:H${r}`);
+          } catch {
+            /* merge может уже существовать в редких случаях */
+          }
+          const a = row.getCell(1);
+          a.value = b.name;
+          a.style = styleCat;
+          if (srcCatRow.height) row.height = srcCatRow.height;
+        } else {
+          row.getCell(1).value = b.item.name;
+          row.getCell(2).value = b.qty;
+          row.getCell(3).value = b.item.pricePerShift;
+          row.getCell(4).value = { formula: `B${r}*C${r}` };
+          row.getCell(5).value = shifts;
+          row.getCell(6).value = { formula: `D${r}*E${r}` };
+          row.getCell(7).value = 30;
+          row.getCell(8).value = { formula: `F${r}*(1-G${r}%)` };
+          for (let c = 1; c <= 8; c++) {
+            const st = styleItemCells[c];
+            if (st) row.getCell(c).style = st;
+          }
+          if (srcItemRow.height) row.height = srcItemRow.height;
+        }
+        r++;
+      }
+
+      const rSum = r;
+      const sumRow = ws.getRow(rSum);
+      sumRow.getCell(7).value = "Итог";
+      sumRow.getCell(7).style = styleSumG;
+      sumRow.getCell(8).value = { formula: `SUM(H4:H${rSum - 1})` };
+      sumRow.getCell(8).style = styleSumH;
+
+      const out = await wb.xlsx.writeBuffer();
+      const blob = new Blob([out], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const nameSafe = projectTitle.replace(/[\\/:*?"<>|]/g, " ").trim().slice(0, 72) || "Znak-Rent";
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Смета ${nameSafe}.xlsx`;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
+
+      setXlStatus("Файл сметы скачан — откройте его в Excel.", false);
     } catch {
-      setXlStatus("Не удалось записать в таблицу. Проверьте URL скрипта и доступы.", true);
+      setXlStatus(
+        "Не удалось собрать Excel. Убедитесь, что estimate-template.xlsx есть на сайте рядом с booking.html.",
+        true,
+      );
     } finally {
       renderCart();
     }

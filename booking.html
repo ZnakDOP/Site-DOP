@@ -17,11 +17,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="booking.css" />
   </head>
-  <body
-    class="booking-body"
-    data-sheet-webapp-url="https://script.google.com/macros/s/AKfycbxUfXBIteIMfQ3ugsTKQ5c-qqInePsMnzDPHMNiisTdK8AFXkkCg3IWlSY2eEZJGSW4/exec"
-    data-sheet-open-url="https://docs.google.com/spreadsheets/d/1sq9bjGp0LXDmUpviHv1O1A1HAsBuoPegYh5j3pNChfo/edit?gid=0#gid=0"
-  >
+  <body class="booking-body">
     <div class="booking-page">
       <header class="booking-top card">
         <div class="booking-intro">
@@ -84,6 +80,16 @@
               <input id="client-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" />
             </label>
             <label>
+              Название проекта
+              <input
+                id="client-project"
+                name="project"
+                type="text"
+                autocomplete="off"
+                placeholder="Например: Точка Банк, блог 16.04"
+              />
+            </label>
+            <label>
               Телефон или Telegram
               <input
                 id="client-contact"
@@ -106,6 +112,7 @@
         </aside>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <script src="booking.js" defer></script>
   </body>
 </html>
