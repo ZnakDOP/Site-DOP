@@ -48,6 +48,32 @@
     return `${y}-${m}-${day}`;
   }
 
+  /** Рядом с booking.js (важно для GitHub Pages и нестандартных путей). */
+  function resolveAssetUrl(filename) {
+    const scriptEl = document.querySelector('script[src*="booking.js"]');
+    if (scriptEl && scriptEl.src) {
+      try {
+        return new URL(filename, scriptEl.src).href;
+      } catch {
+        /* use page URL */
+      }
+    }
+    return new URL(filename, window.location.href).href;
+  }
+
+  /**
+   * ExcelJS при spliceRows/insertRow часто портит merge-метаданные → падение writeBuffer / битый xlsx.
+   * Снимаем объединения в области листа (шапка + смета), затем заново мерджим только нужное.
+   */
+  function stripMergesThroughRow(worksheet, lastRow) {
+    const bottom = Math.min(500, Math.max(32, lastRow + 10));
+    try {
+      worksheet.unMergeCells(`A1:H${bottom}`);
+    } catch {
+      /* редкий сбой Range — дальше splice всё равно может упасть; текст ошибки покажем в catch openCartInXl */
+    }
+  }
+
   function initDates() {
     if (!els.dateFrom || !els.dateTo) return;
     const today = yyyyMmDd(new Date());
@@ -512,10 +538,14 @@
       if (els.btnXl) els.btnXl.disabled = true;
       setXlStatus("Собираю смету в Excel…", false);
 
-      const tplUrl = new URL("estimate-template.xlsx", window.location.href);
+      const tplUrl = new URL(resolveAssetUrl("estimate-template.xlsx"));
       tplUrl.searchParams.set("v", "tochka-blog-1");
       const res = await fetch(tplUrl.href, { cache: "no-store" });
-      if (!res.ok) throw new Error("template_http_" + res.status);
+      if (!res.ok) {
+        throw new Error(
+          `Шаблон estimate-template.xlsx не загрузился (HTTP ${res.status}). Проверьте, что файл в репозитории и попал в деплой.`,
+        );
+      }
 
       const buf = await res.arrayBuffer();
       const wb = new ExcelJSGlobal.Workbook();
@@ -539,6 +569,8 @@
       ws.eachRow((row, rowNumber) => {
         if (rowNumber > maxR) maxR = rowNumber;
       });
+      stripMergesThroughRow(ws, maxR);
+
       if (maxR > 3) ws.spliceRows(4, maxR - 3);
 
       const totalInserted = blocks.length + 1;
@@ -547,6 +579,12 @@
       }
 
       ws.getCell("A1").value = projectTitle;
+      try {
+        ws.mergeCells("A1:H1");
+        ws.mergeCells("A3:H3");
+      } catch {
+        /* шапка без merge — редкий случай */
+      }
 
       let r = 4;
       for (const b of blocks) {
@@ -601,9 +639,14 @@
       setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
 
       setXlStatus("Файл сметы скачан — откройте его в Excel.", false);
-    } catch {
+    } catch (err) {
+      const msg =
+        err && typeof err.message === "string"
+          ? err.message
+          : "Неизвестная ошибка при сборке файла.";
+      console.error("openCartInXl:", err);
       setXlStatus(
-        "Не удалось собрать Excel. Убедитесь, что estimate-template.xlsx есть на сайте рядом с booking.html.",
+        msg.length > 220 ? msg.slice(0, 217) + "…" : msg,
         true,
       );
     } finally {
