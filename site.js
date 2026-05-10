@@ -1,6 +1,78 @@
 ;(function () {
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual"
+  }
+
+  function scrollTopHard() {
+    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }
+
+  scrollTopHard()
+  document.addEventListener("DOMContentLoaded", scrollTopHard)
+  window.addEventListener("load", scrollTopHard)
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) scrollTopHard()
+  })
+
+  const mqNarrow = window.matchMedia("(max-width: 768px)")
+  let freeIntro = function () {}
+
+  if (!prefersReduced && mqNarrow.matches) {
+    document.body.classList.add("mobile-intro-locked")
+    const bio = document.getElementById("bio")
+    const cv = document.getElementById("cv")
+    const showreel = document.getElementById("showreel")
+    if (bio) bio.setAttribute("aria-hidden", "true")
+    if (cv) cv.setAttribute("aria-hidden", "true")
+    if (showreel) showreel.setAttribute("aria-hidden", "true")
+
+    let freed = false
+    freeIntro = function () {
+      if (freed) return
+      freed = true
+      document.body.classList.remove("mobile-intro-locked")
+      document.body.classList.add("mobile-intro-free")
+      if (bio) bio.removeAttribute("aria-hidden")
+      if (cv) cv.removeAttribute("aria-hidden")
+      if (showreel) showreel.removeAttribute("aria-hidden")
+      window.removeEventListener("scroll", onFirstScroll, { passive: true })
+      window.removeEventListener("touchmove", freeIntro, { passive: true })
+      window.removeEventListener("wheel", freeIntro, { passive: true })
+    }
+
+    function onFirstScroll() {
+      if ((window.scrollY || 0) > 8) freeIntro()
+    }
+
+    window.addEventListener("scroll", onFirstScroll, { passive: true })
+    window.addEventListener("touchmove", freeIntro, { passive: true })
+    window.addEventListener("wheel", freeIntro, { passive: true })
+
+    document.querySelectorAll('.site-header__nav a[href^="#"]').forEach((a) => {
+      a.addEventListener("click", () => freeIntro())
+    })
+  }
+
+  const siteBg = document.querySelector(".site-bg")
+  if (siteBg && !prefersReduced) {
+    let ticking = false
+    const parallax = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const y = window.scrollY || 0
+        siteBg.style.setProperty("--bg-parallax", `${y * 0.1}px`)
+        ticking = false
+      })
+    }
+    window.addEventListener("scroll", parallax, { passive: true })
+    parallax()
+  }
+
   const loader = document.getElementById("site-loader")
   if (loader && !prefersReduced) {
     const done = () => {
@@ -74,13 +146,12 @@
         })
       },
       {
-        rootMargin: narrow ? "0px 0px -4% 0px" : "0px 0px -8% 0px",
-        threshold: narrow ? 0.04 : 0.08,
+        rootMargin: narrow ? "0px 0px -2% 0px" : "0px 0px -6% 0px",
+        threshold: narrow ? 0.02 : 0.06,
       }
     )
     document.querySelectorAll(".reveal").forEach((el) => io.observe(el))
   } else {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("reveal--visible"))
   }
-
 })()
