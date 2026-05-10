@@ -1,0 +1,5 @@
+# Security contact — gorushkindop.com
+Contact: mailto:a@gorushkindop.ru
+Preferred-Languages: ru, en
+Canonical: https://gorushkindop.com/.well-known/security.txt
+Expires: 2027-12-31T23:59:59.000Z
