@@ -1,21 +1,31 @@
+/* Бронирование — та же сетка, что в первой версии; визуал как на главной (home.css) */
+
 .booking-body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Inter", sans-serif;
-  color: var(--text);
-  background: url("images/arsenii-camera.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  line-height: 1.4;
+  min-height: 100dvh;
+}
+
+.booking-main {
+  padding-top: 0.5rem;
 }
 
 .booking-page {
-  width: min(1100px, 100%);
+  width: min(var(--max), 100%);
   margin: 0 auto;
-  padding: max(20px, env(safe-area-inset-top)) 16px max(48px, env(safe-area-inset-bottom));
+  padding-bottom: max(48px, env(safe-area-inset-bottom));
   display: grid;
   gap: 14px;
+}
+
+.booking-page .card {
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 1.35rem 1.4rem;
+  background: var(--surface);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
 
 .booking-top {
@@ -30,41 +40,61 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
-  border-radius: 999px;
+  padding: 10px 16px;
+  border-radius: 12px;
   text-decoration: none;
-  color: rgba(10, 22, 44, 0.92);
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 8px 18px rgba(8, 18, 36, 0.12);
-  transition: transform 0.2s ease, background 0.2s ease;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--stroke2);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.18s ease;
 }
 
 .booking-back:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.55);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.booking-back:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .booking-intro h1 {
   margin: 14px 0 0;
-  font-size: clamp(24px, 4vw, 34px);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.125rem);
+  font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
 }
 
-.booking-intro p {
-  margin: 8px 0 0;
+.booking-panel__title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.booking-panel__title--compact {
+  margin-bottom: 2px;
+}
+
+.booking-panel__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--muted);
   max-width: 56ch;
-  color: var(--muted);
-  font-size: 15px;
-}
-
-.booking-hint {
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--muted);
-  opacity: 0.92;
 }
 
 .booking-layout {
@@ -87,9 +117,11 @@
 }
 
 .booking-category h2 {
-  font-size: 17px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
   margin-bottom: 10px;
-  color: #1a3054;
+  color: var(--text);
 }
 
 .catalog-fallback {
@@ -105,9 +137,9 @@
   gap: 10px 14px;
   align-items: center;
   padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  background: rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  background: var(--surface2);
   margin-bottom: 8px;
 }
 
@@ -122,6 +154,7 @@
 .equipment-name {
   font-weight: 600;
   font-size: 15px;
+  color: var(--text);
 }
 
 .equipment-kit {
@@ -134,8 +167,7 @@
 .equipment-stock {
   margin-top: 4px;
   font-size: 11px;
-  color: var(--muted);
-  opacity: 0.92;
+  color: var(--dim);
 }
 
 .equipment-price {
@@ -147,18 +179,24 @@
 .btn-add {
   padding: 8px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.5);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  border: 1px solid var(--stroke2);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
   color: var(--text);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
 }
 
 .btn-add:hover {
-  background: rgba(255, 255, 255, 0.72);
+  border-color: var(--accent);
+  background: rgba(94, 234, 212, 0.08);
 }
 
 .btn-add:active {
@@ -166,22 +204,18 @@
 }
 
 .btn-add:disabled {
-  opacity: 0.48;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .btn-add:disabled:hover {
-  background: rgba(255, 255, 255, 0.5);
+  border-color: var(--stroke2);
+  background: var(--surface);
 }
 
 .booking-cart {
   position: sticky;
-  top: 16px;
-}
-
-.cart-block h2 {
-  font-size: 20px;
-  margin-bottom: 4px;
+  top: calc(var(--header-offset) + 12px);
 }
 
 .date-range-field {
@@ -191,8 +225,11 @@
 }
 
 .date-range-field-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
   color: var(--muted);
 }
 
@@ -200,20 +237,14 @@
   font-size: 12px;
   line-height: 1.35;
   color: var(--muted);
-  opacity: 0.92;
   margin-top: -4px;
 }
 
 .calendar-widget {
   padding: 12px 12px 10px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.65),
-    0 10px 28px rgba(8, 18, 36, 0.1);
-  backdrop-filter: blur(16px) saturate(125%);
-  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  border-radius: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--stroke);
 }
 
 .calendar-widget-header {
@@ -226,30 +257,30 @@
 
 .calendar-month-label {
   font-size: 15px;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.02em;
-  color: #10223f;
+  color: var(--text);
 }
 
 .calendar-nav {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.55);
-  color: #10223f;
+  border: 1px solid var(--stroke2);
+  background: var(--surface);
+  color: var(--text);
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s ease, transform 0.12s ease;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 }
 
 .calendar-nav:hover {
-  background: rgba(255, 255, 255, 0.78);
+  border-color: var(--accent);
+  background: rgba(94, 234, 212, 0.08);
 }
 
 .calendar-nav:active {
@@ -262,10 +293,11 @@
   gap: 2px;
   margin-bottom: 6px;
   text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: rgba(65, 89, 126, 0.72);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--dim);
   text-transform: uppercase;
 }
 
@@ -281,10 +313,10 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  font-family: inherit;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
-  color: #10223f;
+  color: var(--text);
   cursor: pointer;
   position: relative;
   padding: 0;
@@ -297,23 +329,23 @@
 }
 
 .calendar-cell--muted {
-  color: rgba(65, 89, 126, 0.35);
+  color: var(--dim);
   cursor: default;
   pointer-events: none;
 }
 
 .calendar-cell--today:not(.calendar-cell--endpoint) {
-  box-shadow: inset 0 0 0 2px rgba(10, 132, 255, 0.55);
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .calendar-cell--in-range {
-  background: rgba(10, 132, 255, 0.14);
+  background: rgba(94, 234, 212, 0.12);
   border-radius: 10px;
 }
 
 .calendar-cell--endpoint {
-  background: #0a84ff;
-  color: #fff;
+  background: var(--accent);
+  color: var(--bg0);
   font-weight: 650;
   border-radius: 50%;
   z-index: 1;
@@ -337,6 +369,11 @@
   color: var(--muted);
 }
 
+.date-range-meta strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .cart-lines {
   margin-top: 16px;
   display: flex;
@@ -350,14 +387,15 @@
   gap: 8px;
   align-items: start;
   padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--stroke);
 }
 
 .cart-line-title {
   font-weight: 600;
   font-size: 14px;
+  color: var(--text);
 }
 
 .cart-line-meta {
@@ -377,12 +415,17 @@
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--stroke2);
+  background: var(--surface);
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
   color: var(--text);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.cart-qty button:hover:not(:disabled) {
+  border-color: var(--accent);
 }
 
 .cart-qty span {
@@ -390,6 +433,7 @@
   text-align: center;
   font-weight: 600;
   font-size: 14px;
+  color: var(--text);
 }
 
 .cart-qty button:disabled {
@@ -406,15 +450,20 @@
 .cart-total {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  border-top: 1px solid var(--stroke);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
 }
 
 .cart-total strong {
   font-size: 18px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
 .reserve-form {
@@ -426,8 +475,11 @@
 .reserve-form label {
   display: grid;
   gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -435,42 +487,29 @@
 .reserve-form textarea {
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.55);
-  font-family: inherit;
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.25);
+  font-family: var(--font-body);
   font-size: 15px;
   color: var(--text);
   resize: vertical;
   min-height: 0;
+  transition: border-color 0.2s ease;
+}
+
+.reserve-form input::placeholder,
+.reserve-form textarea::placeholder {
+  color: var(--dim);
+}
+
+.reserve-form input:focus,
+.reserve-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .reserve-form textarea {
   min-height: 72px;
-}
-
-.btn-primary {
-  margin-top: 4px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(230, 240, 255, 0.65));
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  color: #10223f;
-  cursor: pointer;
-  box-shadow: 0 10px 22px rgba(8, 18, 36, 0.15);
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(8, 18, 36, 0.18);
-}
-
-.btn-primary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
 }
 
 .form-actions {
@@ -479,8 +518,20 @@
   gap: 8px;
 }
 
-.form-actions .btn-primary {
+.form-actions .btn {
   margin-top: 0;
+  width: 100%;
+}
+
+.form-actions .btn--primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.form-actions .btn--primary:disabled:hover {
+  background: var(--text);
+  color: var(--bg0);
+  border-color: var(--text);
 }
 
 .xl-status {
@@ -490,20 +541,16 @@
 }
 
 .booking-error {
-  margin-top: 12px;
+  margin-top: 0;
   padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(255, 235, 235, 0.75);
-  border: 1px solid rgba(220, 120, 120, 0.45);
-  color: #6b1c1c;
+  border-radius: 12px;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fecaca;
   font-size: 14px;
 }
 
 @media (max-width: 900px) {
-  .booking-body {
-    background-attachment: scroll;
-  }
-
   .booking-layout {
     grid-template-columns: 1fr;
   }

@@ -2,8 +2,25 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Бронирование техники — Arsenii Gorushkin</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#060608" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' blob:; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; frame-src 'none'; worker-src 'self' blob:; connect-src 'self' https://litterbox.catbox.moe https://0x0.st https://view.officeapps.live.com; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    />
+    <meta
+      http-equiv="Permissions-Policy"
+      content="camera=(), microphone=(), geolocation=(), usb=(), payment=()"
+    />
+    <link rel="icon" href="favicon.ico?v=3" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/dp-32.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="icons/dp.svg?v=3" />
+    <link rel="apple-touch-icon" href="icons/dp-180.png?v=3" />
+    <title>Рентал техники — Arsenii Gorushkin DOP</title>
     <meta
       name="description"
       content="Корзина и бронирование съёмочного оборудования на одну или несколько смен."
@@ -11,113 +28,145 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="booking.css" />
+    <link rel="stylesheet" href="home.css?v=41" />
+    <link rel="stylesheet" href="booking.css?v=2" />
+    <script src="site.js?v=2" defer></script>
   </head>
   <body class="booking-body">
-    <div class="booking-page">
-      <header class="booking-top card">
-        <div class="booking-intro">
-          <a class="booking-back" href="index.html">← На главную</a>
-          <h1>Бронирование техники</h1>
+    <div class="site-bg" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <nav class="site-header__nav" aria-label="Разделы сайта">
+        <a href="index.html#showreel">Showreel</a>
+        <a href="index.html#bio">Bio</a>
+        <a href="index.html#cv">CV</a>
+        <a href="index.html#work">Work</a>
+        <a href="index.html#links">Links</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="index.html#rental">Rental</a>
+      </nav>
+      <button
+        type="button"
+        class="site-header__menu-btn"
+        aria-label="Открыть меню"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <main class="site-main booking-main" id="top">
+      <div class="booking-page wrap">
+        <header class="booking-top card">
+          <div class="booking-intro">
+            <a class="booking-back" href="index.html">← На главную</a>
+            <h1>Бронирование техники</h1>
+          </div>
+        </header>
+
+        <div id="load-error" class="booking-error" hidden></div>
+
+        <div class="booking-layout">
+          <section class="card booking-catalog">
+            <div class="card-inner">
+              <h2 class="booking-panel__title">Каталог</h2>
+              <p class="booking-panel__subtitle">
+                Цены за одну смену. Итог умножается на число смен.
+              </p>
+              <div id="catalog"></div>
+            </div>
+          </section>
+
+          <aside class="card booking-cart">
+            <h2 class="booking-panel__title booking-panel__title--compact">Корзина</h2>
+            <div class="date-range-field">
+              <span class="date-range-field-title">Период аренды</span>
+              <span class="calendar-hint"
+                >Первый тап — начало аренды, второй — окончание (один тап дважды = один день).</span
+              >
+              <div
+                class="calendar-widget"
+                id="booking-calendar"
+                role="application"
+                aria-label="Календарь: выберите дату начала, затем дату окончания"
+              >
+                <div class="calendar-widget-header">
+                  <button type="button" class="calendar-nav" id="cal-prev" aria-label="Предыдущий месяц">
+                    ‹
+                  </button>
+                  <div class="calendar-month-label" id="cal-month-label"></div>
+                  <button type="button" class="calendar-nav" id="cal-next" aria-label="Следующий месяц">
+                    ›
+                  </button>
+                </div>
+                <div class="calendar-weekdays" aria-hidden="true">
+                  <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span
+                  ><span>Сб</span><span>Вс</span>
+                </div>
+                <div class="calendar-grid" id="cal-grid"></div>
+                <p class="calendar-range-readout" id="cal-readout"></p>
+              </div>
+              <input id="date-from" name="date-from" type="hidden" />
+              <input id="date-to" name="date-to" type="hidden" />
+              <p class="date-range-meta">Смен в выбранном периоде: <strong id="shifts-count">1</strong></p>
+            </div>
+            <p id="cart-empty" class="cart-empty">Корзина пуста — добавьте технику из каталога.</p>
+            <div id="cart-lines" class="cart-lines" aria-live="polite"></div>
+            <div class="cart-total">
+              <span>Итого</span>
+              <strong id="cart-total">0 ₽</strong>
+            </div>
+
+            <form id="reserve-form" class="reserve-form">
+              <label>
+                Имя
+                <input id="client-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" />
+              </label>
+              <label>
+                Название проекта
+                <input
+                  id="client-project"
+                  name="project"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Например: Точка Банк, блог 16.04"
+                />
+              </label>
+              <label>
+                Телефон или Telegram
+                <input
+                  id="client-contact"
+                  name="contact"
+                  type="text"
+                  autocomplete="tel"
+                  placeholder="+7… или @username"
+                />
+              </label>
+              <label>
+                Даты, площадка, пожелания
+                <textarea id="client-dates" name="dates" placeholder="Например: 12–14 мая, Москва, нужен кей…"></textarea>
+              </label>
+              <div class="form-actions">
+                <button id="btn-reserve" type="submit" class="btn btn--primary" disabled>Оформить заявку</button>
+                <button id="btn-xl" type="button" class="btn btn--primary" disabled>Открыть в XL</button>
+              </div>
+              <p id="xl-status" class="xl-status" hidden></p>
+            </form>
+          </aside>
         </div>
-      </header>
-
-      <div id="load-error" class="booking-error" hidden></div>
-
-      <div class="booking-layout">
-        <section class="card booking-catalog">
-          <div class="card-inner">
-            <h2 style="font-size: 20px; margin-bottom: 4px">Каталог</h2>
-            <p class="subtitle" style="margin-top: 6px">Цены за одну смену. Итог умножается на число смен.</p>
-            <div id="catalog"></div>
-          </div>
-        </section>
-
-        <aside class="card booking-cart">
-          <h2>Корзина</h2>
-          <div class="date-range-field">
-            <span class="date-range-field-title">Период аренды</span>
-            <span class="calendar-hint">Первый тап — начало аренды, второй — окончание (один тап дважды = один день).</span>
-            <div
-              class="calendar-widget"
-              id="booking-calendar"
-              role="application"
-              aria-label="Календарь: выберите дату начала, затем дату окончания"
-            >
-              <div class="calendar-widget-header">
-                <button type="button" class="calendar-nav" id="cal-prev" aria-label="Предыдущий месяц">
-                  ‹
-                </button>
-                <div class="calendar-month-label" id="cal-month-label"></div>
-                <button type="button" class="calendar-nav" id="cal-next" aria-label="Следующий месяц">
-                  ›
-                </button>
-              </div>
-              <div class="calendar-weekdays" aria-hidden="true">
-                <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
-              </div>
-              <div class="calendar-grid" id="cal-grid"></div>
-              <p class="calendar-range-readout" id="cal-readout"></p>
-            </div>
-            <input id="date-from" name="date-from" type="hidden" />
-            <input id="date-to" name="date-to" type="hidden" />
-            <p class="date-range-meta">Смен в выбранном периоде: <strong id="shifts-count">1</strong></p>
-          </div>
-          <p id="cart-empty" class="cart-empty">Корзина пуста — добавьте технику из каталога.</p>
-          <div id="cart-lines" class="cart-lines" aria-live="polite"></div>
-          <div class="cart-total">
-            <span>Итого</span>
-            <strong id="cart-total">0 ₽</strong>
-          </div>
-
-          <form id="reserve-form" class="reserve-form">
-            <label>
-              Имя
-              <input id="client-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" />
-            </label>
-            <label>
-              Название проекта
-              <input
-                id="client-project"
-                name="project"
-                type="text"
-                autocomplete="off"
-                placeholder="Например: Точка Банк, блог 16.04"
-              />
-            </label>
-            <label>
-              Телефон или Telegram
-              <input
-                id="client-contact"
-                name="contact"
-                type="text"
-                autocomplete="tel"
-                placeholder="+7… или @username"
-              />
-            </label>
-            <label>
-              Даты, площадка, пожелания
-              <textarea id="client-dates" name="dates" placeholder="Например: 12–14 мая, Москва, нужен кей…"></textarea>
-            </label>
-            <div class="form-actions">
-              <button id="btn-reserve" type="submit" class="btn-primary" disabled>Оформить заявку</button>
-              <button id="btn-xl" type="button" class="btn-primary" disabled>Открыть в XL</button>
-            </div>
-            <p id="xl-status" class="xl-status" hidden></p>
-          </form>
-        </aside>
       </div>
-    </div>
-    <!-- ExcelJS (собран под Node): в браузере нужны глобалы, иначе load/writeBuffer падают молча или с неочевидной ошибкой -->
-    <script>
-      window.global = window;
-      window.process = window.process || { browser: true, env: { NODE_ENV: "production" } };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    </main>
+    <!-- ExcelJS: глобалы в booking-boot.js; CDN с SRI -->
+    <script src="booking-boot.js?v=1"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"
+      integrity="sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz"
+      crossorigin="anonymous"
+    ></script>
     <script src="booking.js?v=xl-20260509d" defer></script>
   </body>
 </html>

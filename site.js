@@ -44,6 +44,27 @@
     })
   }
 
+  if (!prefersReduced) {
+    let lastY = window.scrollY || 0
+    let ticking = false
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const y = window.scrollY || 0
+        const delta = y - lastY
+        if (Math.abs(delta) > 2) {
+          document.body.classList.toggle("scroll-down", delta > 0)
+          document.body.classList.toggle("scroll-up", delta < 0)
+        }
+        lastY = y
+        ticking = false
+      })
+    }
+    document.body.classList.add("scroll-down")
+    window.addEventListener("scroll", onScroll, { passive: true })
+  }
+
   if (!prefersReduced && "IntersectionObserver" in window) {
     const narrow = window.matchMedia("(max-width: 768px)").matches
     const io = new IntersectionObserver(
@@ -61,4 +82,5 @@
   } else {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("reveal--visible"))
   }
+
 })()
